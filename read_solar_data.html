@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <style>
+    body { margin:0;position:fixed;top:0;right:0;bottom:0;left:0; }
+  </style>
+</head>
+
+<body>
+  <script>
+    
+     // Pour bien centrer le contenu (dimensions de Blockbuilder)
+    var margin = {top: 60, right: 60, bottom: 60, left: 60};
+	var width = 960 - margin.left - margin.right;
+    var height = 500 - margin.top - margin.bottom;
+    
+    // On ajoute dans le body une balise svg dans lequelle on va dessiner
+    var svg = d3.select("body").append("svg")
+      .attr("width", 960)
+      .attr("height", 500);
+    
+    
+    //Lecture du jeu de données
+    var parseDate = d3.timeParse("%_Y %B %e");
+    var parseTime = d3.timeParse("%H:%M:%S");
+    var parseDuration = d3.timeParse("%Mm%Ss");
+    var data = d3.csv('solar.csv', function(error, data){
+      
+      //parsage des données
+      data.forEach(function(d)
+      {
+            d['Catalog Number']=parseInt(d['Catalog Number']);
+            d['Calendar Date']=parseDate(d['Calendar Date']);
+      		d['Eclipse Time']=parseTime(d['Eclipse Time']);
+      		d['Delta T (s)']=parseInt(d['Delta T (s)']);
+      		d['Lunation Number']=parseInt(d['Lunation Number']);
+      		d['Saros Number']=parseInt(d['Saros Number']);
+      		d['Gamma']=parseFloat(d['Gamma']);
+      		d['Eclipse Magnitude']=parseFloat(d['Eclipse Magnitude']);
+      		d['Sun Altitude']=parseInt(d['Sun Altitude']);
+      		d['Sun Azimuth']=parseInt(d['Sun Azimuth']);
+      		d['Path Width (km)']=parseInt(d['Path Width (km)']); 
+      		d['Central Duration']=parseDuration(d['Central Duration']);
+			//Traitement des données manquantes : mises nulles
+        	if(isNaN(d['Path Width (km)']))
+            {
+              d['Path Width (km)']=parseInt("0");  
+            }
+			if((d['Central Duration'])===null)
+            {
+              d['Central Duration']=parseDuration("0m0s");
+            }
+			
+			
+      });
+      
+      var x_scale=d3.scaleTime()
+     				.domain(d3.extent(data, function(d) {return d['Calendar Date'];}))
+					.range([0,width]);
+      
+    
+      var y_scale=d3.scaleTime()
+      				.domain(d3.extent(data, function(d) {return d['Delta T (s)'];}))
+					.range([height,0]); 
+					
+      
+    
+      svg.selectAll("circle")
+         .data(data)
+         .enter()
+         .append("circle")
+         .attr("cx",function(d){return margin.left+x_scale(d['Calendar Date'])})
+         .attr("cy",function(d){return margin.top+y_scale(d['Delta T (s)'])})
+         .attr("r",1)
+         .style("fill","red");
+		 
+
+		//Les axes
+	 var x_start=margin.left;
+	 var x_end=margin.left+width;
+	 var y_start=margin.top;
+	 var y_end=margin.top+height;
+      svg.append("line").attr("x1",0)
+      									.attr("x2",960)
+      									.attr("y1",y_end)
+      									.attr("y2",y_end)
+      									.attr("stroke","grey")
+      									.attr("stroke-width","1px");
+     
+      svg.append("line").attr("x1",x_start)
+      									.attr("x2",x_start)
+      									.attr("y1",0)
+      									.attr("y2",500)
+      									.attr("stroke","grey")
+      									.attr("stroke-width","1px");
+										
+		svg.append("text").text("Date")
+      									.attr("x",margin.left+width/2.0)
+      									.attr("y",y_end+margin.bottom/2.0)
+      									.attr("font-size","15px");
+										
+		svg.append("text").text("Delta T(s)")
+      									.attr("x",margin.left+10)
+      									.attr("y",margin.top/2)
+      									.attr("font-size","15px");
+      
+    });
+    
+   
+    
+    
+
+  </script>
+</body>
+</html>
