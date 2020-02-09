@@ -74,6 +74,15 @@ body
 	margin-right:5px;
 }
 
+.choosen_param
+{
+	display:flex;
+	flex-direction:row;
+	flew-wrap:no-wrap;
+	justify-content:space-between;
+	padding-left:10px;
+	padding-right:10px;
+}
 
 .choose_param
 {
@@ -166,6 +175,7 @@ body
 	color:green;
 	font-size:0.001em;
 	border:1px solid black;
+	transition:width 0.5s ease;
 }
 
 .eclipse_liste_item_param select

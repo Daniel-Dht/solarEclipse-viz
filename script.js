@@ -13,6 +13,8 @@ var data = d3.csv('solar_1950_2050.csv', function(error, data){
   //parsage des données
   data.forEach(function(d)
   {
+		//PARSAGE
+		
 		d['Catalog Number']=parseInt(d['Catalog Number']);
 		d['Calendar Date']=parseDate(d['Calendar Date']);
 		d['Eclipse Time']=parseTime(d['Eclipse Time']);
@@ -39,10 +41,10 @@ var data = d3.csv('solar_1950_2050.csv', function(error, data){
   });
 
 
-//AFFICHAGE LISTE DES ECLIPSES
+
 var formatDate = d3.timeFormat("%d/%m/%Y");
 var formatHeure = d3.timeFormat("%H:%M");
-var formatDuree = d3.timeFormat("%H:%M:%S");
+var formatDuree = d3.timeFormat("%M'%S''");
 
 function show_saros(e)
 {
@@ -135,7 +137,7 @@ function hide_saros()
 	d3.selectAll("polyline").attr("stroke","rgb(180,180,180)")
 }
 
-
+//AFFICHAGE LISTE DES ECLIPSES
 //Creation des items
 var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
@@ -148,7 +150,8 @@ var items = eclipse_liste_container.selectAll("div").data(data)
 //Pour le formattage
 var formatDate = d3.timeFormat("%d/%m/%Y");
 var formatHeure = d3.timeFormat("%H:%M");
-var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Eclipse Magnitude']})).range([1,70]);
+var formatDuree = d3.timeFormat("%M'%S''");
+//var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Eclipse Magnitude']})).range([0,70]);
 //Changer de paramScale avec le choix du paramètre
 
 //Ajout de la date a chaque item
@@ -173,12 +176,74 @@ items.append("div")
 				})
 
 //Ajout du parametre a chaque item
-items.append("div")
-	   .attr("class","eclipse_liste_item_param")
-	   .html(function(d){return '<div class="barre" style="width:'+paramScale(d['Eclipse Magnitude']).toString().substring(0,4)+'%">.</div><span>'+d['Eclipse Magnitude'].toString().substring(0,4)+'</span>'})
+var eclipse_liste_item_param= items.append("div")
+								   .attr("class","eclipse_liste_item_param");
+								   
+var eclipse_liste_item_param_barre=eclipse_liste_item_param.append("div")
+															.attr("class","barre")
+															.style("width","0%")
+															.style("visibility","hidden");
+															
+var eclipse_liste_item_param_span=eclipse_liste_item_param.append("span")
+								   //.html(function(d){return '<div class="barre" style="width:'+"0"+'%">.&nbsp;</div><span>'+d['Eclipse Magnitude'].toString().substring(0,4)+'</span>'})
 	   
-	   
-	   
+//Gestion du menu deroulant pour le choix du paramètre
+d3.select(".choose_param_ratio").on("click",function()
+											{
+												d3.select(".choosen_param i").text("Ratio");
+												
+												var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Eclipse Magnitude']})).range([0,70]);
+												
+												eclipse_liste_item_param_barre.style("visibility","visible");
+												
+											    eclipse_liste_item_param_span.text(function(d){return d['Eclipse Magnitude'].toString().substring(0,4)});
+												
+												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Eclipse Magnitude']).toString().substring(0,4)+"%"});
+												
+											});
+											
+d3.select(".choose_param_longueur").on("click",function()
+											{
+												d3.select(".choosen_param i").text("Longueur (km)");
+												
+												var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Path Width (km)']})).range([0,70]);
+												
+												eclipse_liste_item_param_barre.style("visibility","visible");
+												
+												eclipse_liste_item_param_span.text(function(d){return d['Path Width (km)'].toString()});
+												
+												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Path Width (km)']).toString().substring(0,4)+"%"});
+												
+											});
+   
+d3.select(".choose_param_duree").on("click",function()
+											{
+												d3.select(".choosen_param i").text("Durée");
+												
+												var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Central Duration']})).range([0,70]);
+												
+												eclipse_liste_item_param_barre.style("visibility","visible");
+												
+												eclipse_liste_item_param_span.text(function(d){return formatDuree(d['Central Duration']).toString()});
+												
+												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Central Duration']).toString().substring(0,4)+"%"});
+												
+											});
+											
+d3.select(".choose_param_gamma").on("click",function()
+											{
+												d3.select(".choosen_param i").text("Gamma");
+												
+												var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Gamma']})).range([0,70]);
+												
+												eclipse_liste_item_param_barre.style("visibility","visible");
+												
+												eclipse_liste_item_param_span.text(function(d){return d['Gamma'].toString().substring(0,4)});
+												
+												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Gamma']).toString().substring(0,4)+"%"});
+												
+											});
+   
 	   
 	   
 	   
@@ -211,7 +276,7 @@ svg.selectAll("polyline")
 	 .enter()
 	 .append("polyline")
 	 .attr("fill","none")
-	 .attr("stroke","rgb(180,180,180)")
+	 .attr("stroke","rgb(200,200,200)")
 	 .attr("stroke-width","0.4")
 	 .on("mouseover",function(e){show_saros(e);})
 	 .on("mouseout",function(){hide_saros()})
