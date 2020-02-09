@@ -1,0 +1,288 @@
+/*Body : grille 2 colonnes */
+body
+{
+	margin:0;
+	width:100vw;
+	height:100vh;
+	background-color:white;
+	font-family: 'Oswald','PT Sans Narrow', sans-serif;
+	display:grid;
+	grid-template-columns: 7fr 20fr;
+	grid-template-rows: 1fr;
+}
+
+
+
+/*Le panneau de gauche et la zone d'affichage*/
+.left_panel
+{
+	height:100vh;
+	background-color:rgb(250,250,250);
+	box-shadow: 2px 0px 5px rgb(220,220,220);
+	z-index:3;
+	display:grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto auto auto 1fr;
+}
+
+.display
+{
+	background-color:white;
+}
+
+
+
+
+
+
+
+
+/*Logo*/
+.logo
+{
+	width:100%;
+	padding-top:20px;
+	padding-bottom:20px;
+	text-align:center;
+	font-size:2em;
+	background-color:rgb(0,31,63);
+	color:white;
+}
+
+
+
+
+
+
+/*Legende pour les 4 types d'éclipse */
+.eclipse_type_legende
+{
+	width:100%;
+	background-color:rgb(240,240,240);
+	padding-top:10px;
+	padding-bottom:10px;
+	display:flex;
+	flex-direction:row;
+	flew-wrap:wrap;
+	justify-content:space-around;
+	align-items:center;
+}
+
+.eclipse_type_legende_symbol
+{
+	margin-left:15px;
+	margin-right:5px;
+}
+
+
+.choose_param
+{
+	width:100%;
+	text-align:center;
+	z-index:10;
+	background-color:rgb(250,250,250);
+	overflow:hidden;
+	height:auto;
+	max-height: 0;
+	transition: max-height 0.7s ease-out;
+}
+
+.choose_param div
+{
+	border: 1px solid rgb(250,250,250);
+}
+
+.choose_param div:hover
+{
+	border:1px solid black;
+	cursor:pointer;
+}
+
+.selector:hover .choose_param
+{
+	height:auto;
+	max-height: 40vh;
+}
+
+
+
+
+
+/*La liste des eclipses visibles*/
+.eclipse_liste_item
+{
+	padding-top:5px;
+	padding-bottom:5px;
+	display:grid;
+	grid-template-columns: 2fr 1fr 1fr 3fr;
+	grid-template-rows: 1fr;
+	text-align:center;
+	transition : all 0.2s ease;
+}
+
+.eclipse_liste_container
+{
+	width:100%;
+	padding-top:10px;
+	padding-bottom:10px;
+	overflow: auto;
+}
+
+.eclipse_liste_container::-webkit-scrollbar
+{
+  width: 5px;
+}
+.eclipse_liste_container::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+ 
+.eclipse_liste_container::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+
+.eclipse_liste_container .eclipse_liste_item:hover
+{
+	background-color:rgb(230,230,230);
+	transition : all 0.2s ease;
+}
+
+
+.eclipse_liste_container .eclipse_liste_item_param
+{
+	padding-left:10px;
+	padding-right:10px;
+	display:flex;
+	flex-direction:row;
+	flew-wrap:no-wrap;
+	justify-content:space-between;
+}
+.barre
+{
+	height:20px;
+	width:70%;
+	background-color:green;
+	color:green;
+	font-size:0.001em;
+	border:1px solid black;
+}
+
+.eclipse_liste_item_param select
+{
+	width:90%;
+	background-color:rgba(255,255,255,1);
+	padding-left:10px;
+	margin-left:5%;
+}
+
+
+
+
+
+
+
+
+
+
+
+/*La zone d'affichage principale*/
+.switch_container
+{
+	width:100%;
+	height:10vh;
+	font-size: 2.5em;
+	display:flex;
+	flex-direction:row;
+	flew-wrap:no-wrap;
+	justify-content:center;
+	align-items:center;
+}
+
+.switch
+{
+	width:70px;
+	height:20px;
+	font-size: 0.1em;
+	margin-left:20px;
+	margin-right:20px;
+	border-radius:20px;
+	background-color:rgb(200,200,200);
+	display:flex;
+	flex-direction:row;
+	flew-wrap:no-wrap;
+	justify-content:flex-start;
+	align-items:center;
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.switch_circle
+{
+	width:16px;
+	height:16px;
+	border-radius:20px;
+	background-color:rgb(0,31,63);
+	color:rgb(0,31,63);
+}
+
+.svg_container
+{
+	width:80%;
+	height:50vh;
+	margin-left:10%;
+	background-color:none;
+}
+
+.axes_title
+{
+	width:90%;
+	height:10%;
+	margin-left:6%;
+	display:flex;
+	flex-direction:row;
+	flew-wrap:no-wrap;
+	justify-content:space-between;	
+}
+
+svg
+{
+	width:100%;
+	height:90%;
+}
+
+polyline
+{
+	transition:all 0.1s ease;
+}
+
+.infos_supp
+{
+	width:80%;
+	height:34vh;
+	margin-left:10%;
+	margin-top: 3vh;
+}
+	
+.infos_supp_titre
+{
+	font-size:1.5em;
+	margin-bottom:10px;
+}
+
+	
+.infos_supp_multiple_columns
+{
+	font-size:1em;
+	column-count: 3;
+	column-gap: 10px;
+}
+
+.saros_item
+{
+	display:grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	grid-template-rows: 1fr;
+	text-align : center;
+}
+
