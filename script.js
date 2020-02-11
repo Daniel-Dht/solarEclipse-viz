@@ -21,6 +21,8 @@ var map_button=d3.select(".fa-map-marker-alt");
 var saros_button=d3.select(".fa-history");
 var switch_button=d3.select(".switch");
 
+
+
 function switch_to(zone)
 {
 	if(zone=="saros")
@@ -45,7 +47,7 @@ function switch_to(zone)
 		map_button.style("color","rgb(0,31,63)");
 		saros_button.style("color","rgb(200,200,200)");
 		switch_button.style("justify-content","flex-start");
-		showGEonMap();
+		//showGEonMap();
 	}
 }
 
@@ -533,16 +535,8 @@ d3.json(dataContinentsPath, function(error, topology) {
 	// 		.transition()
 	// 		.duration(200)
 	// 		.style("fill", "rgb(0, 31, 63)");     		
-	// });
-	
-	// affichage des trajectoires
-	showGEonMap();
-	
+	// });	
 })
-
-
-
-
 
 
 function showGEonMap(){
@@ -613,4 +607,5 @@ function showPath(d, eclipsePath) {
 };
 
 switch_to("map");
+showGEonMap();
 });
