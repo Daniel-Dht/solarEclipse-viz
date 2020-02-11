@@ -1,8 +1,16 @@
-var svg=d3.select("svg");
-console.log(document.getElementsByTagName("svg")[0].getBBox());
-svg.attr("viewBox","0 0 100 100");
-svg.attr("preserveAspectRatio","none");
+var svg_saros=d3.select(".svg_saros");
+var svg_map=d3.select(".svg_map");
 var eclipse_liste_container=d3.select(".eclipse_liste_container");
+
+
+//Taille des svg
+var svg_width=(document.getElementsByClassName("svg_container")[0].offsetWidth);
+var svg_height=0.9*(document.getElementsByClassName("svg_container")[0].offsetHeight);
+svg_saros.attr("viewBox","0 0"+svg_width.toString()+" "+svg_height.toString());
+svg_map.attr("viewBox","0 0"+svg_width.toString()+" "+svg_height.toString());
+
+
+
 
 //Lecture du jeu de données
 var parseDate = d3.timeParse("%_Y %B %e");
@@ -13,8 +21,8 @@ var data = d3.csv('solar_1950_2050.csv', function(error, data){
   //parsage des données
   data.forEach(function(d)
   {
+	  
 		//PARSAGE
-		
 		d['Catalog Number']=parseInt(d['Catalog Number']);
 		d['Calendar Date']=parseDate(d['Calendar Date']);
 		d['Eclipse Time']=parseTime(d['Eclipse Time']);
@@ -49,16 +57,16 @@ var formatDuree = d3.timeFormat("%M'%S''");
 function show_saros(e)
 {
 	//Titre : Soros et son numéro
-	d3.select(".infos_supp_titre")
+	d3.select(".infos_supp_titre_saros")
 	  .text("Saros "+ e['Saros Number'].toString());
 	  
 	//On repasse en 1 seule colomnes  
-	d3.select(".infos_supp_multiple_columns")
+	d3.select(".infos_supp_multiple_columns_saros")
 	  .text("")
 	  .style("column-count","1");
 	
 	//Ajout de la ligende. Un .saros_item est une grid de 6 colomnes	
-	var saros_item = d3.select(".infos_supp_multiple_columns")
+	var saros_item = d3.select(".infos_supp_multiple_columns_saros")
 						.append("div")
 						.attr("class","saros_item")
 						  
@@ -80,13 +88,13 @@ function show_saros(e)
 						var color_selected = "rgb(0,31,63)";
 						
 						//Ajout des cercles sur les axes
-						svg.append("ellipse").attr("cx","8").attr("cy",date_scale(d['Calendar Date']).toString()).attr("rx","0.5").attr("ry","1.4").style("fill",color_selected);
-						svg.append("ellipse").attr("cx","36").attr("cy",duration_scale(d['Central Duration']).toString()).attr("rx","0.5").attr("ry","1.4").style("fill",color_selected);
-						svg.append("ellipse").attr("cx","64").attr("cy",magnitude_scale(d['Eclipse Magnitude']).toString()).attr("rx","0.5").attr("ry","1.4").style("fill",color_selected);
-						svg.append("ellipse").attr("cx","92").attr("cy",path_scale(d['Path Width (km)']).toString()).attr("rx","0.5").attr("ry","1.4").style("fill",color_selected);
+						svg_saros.append("circle").attr("cx",(0.08*svg_width).toString()).attr("cy",date_scale(d['Calendar Date']).toString()).attr("r","3.5").style("fill",color_selected);
+						svg_saros.append("circle").attr("cx",(0.36*svg_width).toString()).attr("cy",duration_scale(d['Central Duration']).toString()).attr("r","3.5").style("fill",color_selected);
+						svg_saros.append("circle").attr("cx",(0.64*svg_width).toString()).attr("cy",magnitude_scale(d['Eclipse Magnitude']).toString()).attr("r","3.5").style("fill",color_selected);
+						svg_saros.append("circle").attr("cx",(0.92*svg_width).toString()).attr("cy",path_scale(d['Path Width (km)']).toString()).attr("r","3.5").style("fill",color_selected);
 						
 						//Ajout d'un saros_item
-						var saros_item = d3.select(".infos_supp_multiple_columns")
+						var saros_item = d3.select(".infos_supp_multiple_columns_saros")
 											.append("div")
 											.attr("class","saros_item")
 						 
@@ -118,11 +126,11 @@ function show_saros(e)
 function hide_saros()
 {
 	//On repasse au texte par defaut
-	d3.select(".infos_supp_titre")
+	d3.select(".infos_supp_titre_saros")
 	  .text("Saros");
 	
 	//On repasse au texte par defaut 
-	d3.select(".infos_supp_multiple_columns")
+	d3.select(".infos_supp_multiple_columns_saros")
 	  .text("Survoler une éclipse solaire");
 	  
 	
@@ -131,7 +139,7 @@ function hide_saros()
 	 
 	
 	//On supprime les cercles 
-	d3.selectAll("ellipse").remove();
+	d3.selectAll("circle").remove();
 	
 	//On remet les polyline par defaut 
 	d3.selectAll("polyline").attr("stroke","rgb(180,180,180)")
@@ -252,84 +260,131 @@ d3.select(".choose_param_gamma").on("click",function()
 //Les echelles
 var date_scale=d3.scaleTime()
      				.domain(d3.extent(data, function(d) {return d['Calendar Date'];}))
-					.range([2,92]);
+					.range([0.02*svg_height,0.92*svg_height]);
 					      
     
 var duration_scale=d3.scaleTime()
 				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
-				.range([2,92]); 
+				.range([0.02*svg_height,0.92*svg_height]); 
 				
 				
 var magnitude_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
-				.range([2,92]); 
+				.range([0.02*svg_height,0.92*svg_height]); 
 				
 				
 var path_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
-				.range([2,92]); 
+				.range([0.02,0.92*svg_height]); 
 				
 
 //Affichage des traits				
-svg.selectAll("polyline")
+svg_saros.selectAll("polyline")
 	 .data(data)
 	 .enter()
 	 .append("polyline")
 	 .attr("fill","none")
 	 .attr("stroke","rgb(200,200,200)")
-	 .attr("stroke-width","0.4")
+	 .attr("stroke-width","2.0")
 	 .on("mouseover",function(e){show_saros(e);})
 	 .on("mouseout",function(){hide_saros()})
-	 .attr("points",function(d){return "8,"+date_scale(d['Calendar Date']).toString()+" 36,"+duration_scale(d['Central Duration']).toString()+" 64,"+magnitude_scale(d['Eclipse Magnitude']).toString()+" 92,"+path_scale(d['Path Width (km)']).toString()});
+	 .attr("points",function(d){return (0.08*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
+									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
+									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
+									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()});
 	 
 	 
 	 
 //Affichage des axes
-svg.append("line")
-   .attr("x1","8")
-   .attr("x2","8")
-   .attr("y1","2")
-   .attr("y2","98")
+svg_saros.append("line")
+   .attr("x1",(0.08*svg_width).toString())
+   .attr("x2",(0.08*svg_width).toString())
+   .attr("y1",(0.02*svg_height).toString())
+   .attr("y2",(0.98*svg_height).toString())
    .attr("stroke","black")
-   .attr("stroke-width","0.4");
-svg.append("polygon")
-   .attr("points","7,95 8,100 9,95")
+   .attr("stroke-width","3.4");
+svg_saros.append("polygon")
+   .attr("points",(0.07*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" "
+					+(0.08*svg_width).toString()
+					+","
+					+(1*svg_height).toString()
+					+" "
+					+(0.09*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" ")
    .attr("stroke","none")
    .attr("fill","black");
 
-svg.append("line")
-   .attr("x1","36")
-   .attr("x2","36")
-   .attr("y1","2")
-   .attr("y2","98")
+svg_saros.append("line")
+   .attr("x1",(0.36*svg_width).toString())
+   .attr("x2",(0.36*svg_width).toString())
+   .attr("y1",(0.02*svg_height).toString())
+   .attr("y2",(0.98*svg_height).toString())
    .attr("stroke","black")
-   .attr("stroke-width","0.4"); 
-svg.append("polygon")
-   .attr("points","35,95 36,100 37,95")
+   .attr("stroke-width","3.4"); 
+svg_saros.append("polygon")
+   .attr("points",(0.35*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" "
+					+(0.36*svg_width).toString()
+					+","
+					+(1*svg_height).toString()
+					+" "
+					+(0.37*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" ")
    .attr("stroke","none")
    .attr("fill","black");
    
-svg.append("line")
-   .attr("x1","64")
-   .attr("x2","64")
-   .attr("y1","2")
-   .attr("y2","98")
+svg_saros.append("line")
+   .attr("x1",(0.64*svg_width).toString())
+   .attr("x2",(0.64*svg_width).toString())
+   .attr("y1",(0.02*svg_height).toString())
+   .attr("y2",(0.98*svg_height).toString())
    .attr("stroke","black")
-   .attr("stroke-width","0.4");
-svg.append("polygon")
-   .attr("points","63,95 64,100 65,95")
+   .attr("stroke-width","3.4");
+svg_saros.append("polygon")
+   .attr("points",(0.63*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" "
+					+(0.64*svg_width).toString()
+					+","
+					+(1*svg_height).toString()
+					+" "
+					+(0.65*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" ")
    .attr("stroke","none")
    .attr("fill","black");
    
-svg.append("line")
-   .attr("x1","92")
-   .attr("x2","92")
-   .attr("y1","2")
-   .attr("y2","98")
+svg_saros.append("line")
+   .attr("x1",(0.92*svg_width).toString())
+   .attr("x2",(0.92*svg_width).toString())
+   .attr("y1",(0.02*svg_height).toString())
+   .attr("y2",(0.98*svg_height).toString())
    .attr("stroke","black")
-   .attr("stroke-width","0.4");
-svg.append("polygon")
-   .attr("points","91,95 92,100 93,95")
+   .attr("stroke-width","3.4");
+svg_saros.append("polygon")
+   .attr("points",(0.91*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" "
+					+(0.92*svg_width).toString()
+					+","
+					+(1*svg_height).toString()
+					+" "
+					+(0.93*svg_width).toString()
+					+","
+					+(0.95*svg_height).toString()
+					+" ")
    .attr("stroke","none")
    .attr("fill","black");
 
