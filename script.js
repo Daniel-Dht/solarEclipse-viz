@@ -6,10 +6,52 @@ var eclipse_liste_container=d3.select(".eclipse_liste_container");
 //Taille des svg
 var svg_width=(document.getElementsByClassName("svg_container")[0].offsetWidth);
 var svg_height=0.9*(document.getElementsByClassName("svg_container")[0].offsetHeight);
-svg_saros.attr("viewBox","0 0"+svg_width.toString()+" "+svg_height.toString());
-svg_map.attr("viewBox","0 0"+svg_width.toString()+" "+svg_height.toString());
+svg_saros.attr("viewBox","0 0 "+svg_width.toString()+" "+svg_height.toString());
+svg_map.attr("viewBox","0 0 "+svg_width.toString()+" "+svg_height.toString());
 
 
+
+//Switch
+var svg_container_map=d3.select(".svg_container_map");
+var infos_supp_map=d3.select(".infos_supp_map");
+var svg_container_saros=d3.select(".svg_container_saros");
+var infos_supp_saros=d3.select(".infos_supp_saros");
+
+var map_button=d3.select(".fa-map-marker-alt");
+var saros_button=d3.select(".fa-history");
+var switch_button=d3.select(".switch");
+
+function switch_to(zone)
+{
+	if(zone=="saros")
+	{
+		svg_container_saros.style("display","block");
+		infos_supp_saros.style("display","block");
+		svg_container_map.style("display","none");
+		infos_supp_map.style("display","none");
+		
+		saros_button.style("color","rgb(0,31,63)");
+		map_button.style("color","rgb(200,200,200)");
+		switch_button.style("justify-content","flex-end");
+	}
+	else 
+	{
+		svg_container_saros.style("display","none");
+		infos_supp_saros.style("display","none");
+		svg_container_map.style("display","block");
+		infos_supp_map.style("display","block");
+		
+		map_button.style("color","rgb(0,31,63)");
+		saros_button.style("color","rgb(200,200,200)");
+		switch_button.style("justify-content","flex-start");
+	}
+}
+switch_to("map");
+
+
+map_button.on("click",function(){switch_to("map");});
+saros_button.on("click",function(){switch_to("saros");});
+//infos_supp_saros.style("display","none");
 
 
 //Lecture du jeu de données
@@ -80,6 +122,7 @@ function show_saros(e)
 	
 	//Parcourt des polylines
 	d3.selectAll("polyline")
+	 .attr("stroke-width",function(d){if(d["Catalog Number"]===e["Catalog Number"]){return "3.0";}})
 	 .attr("stroke",function(d)
 				{
 					//Si meme saros
@@ -131,7 +174,7 @@ function hide_saros()
 	
 	//On repasse au texte par defaut 
 	d3.select(".infos_supp_multiple_columns_saros")
-	  .text("Survoler une éclipse solaire");
+	  .html("Le saros est une période de 18 ans, 11 jours, 7 heures et 43 minutes.<br/>Si une éclipse solaire se produit à un instant donné, une éclipse similaire aura lieu un saros plus tard car la configuartion relative Soleil-Terre-Lune sera quasiment identique. Il y a en tout 204 séries de saros.<br/><br/><em>Survolez une éclipse pour visualiser son saros.</em>");
 	  
 	
 	//On supprime les saros_items  
@@ -142,11 +185,12 @@ function hide_saros()
 	d3.selectAll("circle").remove();
 	
 	//On remet les polyline par defaut 
-	d3.selectAll("polyline").attr("stroke","rgb(180,180,180)")
+	d3.selectAll("polyline").attr("stroke","rgba(200,200,200,0.1)")
 }
 
 //AFFICHAGE LISTE DES ECLIPSES
 //Creation des items
+
 var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
 						   .append("div")
@@ -251,9 +295,34 @@ d3.select(".choose_param_gamma").on("click",function()
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Gamma']).toString().substring(0,4)+"%"});
 												
 											});
-   
-	   
-	   
+
+
+//Affichage d'une partie des données seulement  
+function show_only_type(type)
+{
+	
+	if(type=="P" || type=="A" || type=="T" || type=="H")
+	{
+		items.style("display",function(d)
+								{
+									if(d['Eclipse Type'].substring(0,1)==type){return "grid";}
+									else{return "none";}
+								}
+								);
+	}
+	else
+	{
+		items.style("display","grid");
+	}
+} 
+
+show_only_type("ALL");
+d3.select(".type_P").on("click",function(){show_only_type("P");});
+d3.select(".type_A").on("click",function(){show_only_type("A");});
+d3.select(".type_T").on("click",function(){show_only_type("T");});
+d3.select(".type_H").on("click",function(){show_only_type("H");});
+d3.select(".type_ALL").on("click",function(){show_only_type("ALL");});
+
 	   
 // AFFICHAGE DU GRAPHE DES SAROS
 
@@ -284,7 +353,7 @@ svg_saros.selectAll("polyline")
 	 .enter()
 	 .append("polyline")
 	 .attr("fill","none")
-	 .attr("stroke","rgb(200,200,200)")
+	 .attr("stroke","rgba(200,200,200,0.1)")
 	 .attr("stroke-width","2.0")
 	 .on("mouseover",function(e){show_saros(e);})
 	 .on("mouseout",function(){hide_saros()})
@@ -368,7 +437,7 @@ svg_saros.append("polygon")
 svg_saros.append("line")
    .attr("x1",(0.92*svg_width).toString())
    .attr("x2",(0.92*svg_width).toString())
-   .attr("y1",(0.02*svg_height).toString())
+   .attr("y1",(0.00*svg_height).toString())
    .attr("y2",(0.98*svg_height).toString())
    .attr("stroke","black")
    .attr("stroke-width","3.4");

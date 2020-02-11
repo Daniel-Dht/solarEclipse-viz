@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css?family=Oswald|PT+Sans+Narrow&display=swap" rel="stylesheet">
   <script src="https://d3js.org/d3.v4.min.js"></script>
-  <script src="https://kit.fontawesome.com/ff57f24d1c.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" integrity="sha384-v8BU367qNbs/aIZIxuivaU55N5GPF89WBerHoGA4QTcbUjYiLQtKdrfXnqAcXyTv" crossorigin="anonymous">
 </head>
 
 
@@ -23,20 +23,24 @@
 		<!-- Puis la légende des symboles pour les types d'éclipses -->
 		<div class="eclipse_type_legende">
 			<!-- Eclipse partielle-->
-			<div>
+			<div class="type_P">
 				<span class="eclipse_type_legende_symbol">&#9680;</span><span>Partielle</span>
 			</div>
 			<!-- Eclipse annulaire-->
-			<div>
+			<div class="type_A">
 				<span class="eclipse_type_legende_symbol">&#10687;</span><span>Annulaire</span>
 			</div>
 			<!-- Eclipse totale-->
-			<div>
+			<div class="type_T">
 				<span class="eclipse_type_legende_symbol">&#11044;</span><span>Totale</span>
 			</div>
 			<!-- Eclipse hybride-->
-			<div>
+			<div class="type_H">
 				<span class="eclipse_type_legende_symbol">&#9677;</span><span>Hybride</span>
+			</div>
+			<!-- Tout-->
+			<div class="type_ALL">
+				<span class="eclipse_type_legende_symbol">&#9680;&#10687;&#11044;&#9677;</span>
 			</div>
 		</div>
 		
@@ -127,7 +131,9 @@
 			<div class="infos_supp_titre infos_supp_titre_saros">Saros</div>
 			<!-- Les infos sur plusieurs colonnes -->
 			<div class="infos_supp_multiple_columns infos_supp_multiple_columns_saros">
-				Survoler une éclipse solaire
+				Le saros est une période de 18 ans, 11 jours, 7 heures et 43 minutes.<br/>
+				Si une éclipse solaire se produit à un instant donné, une éclipse similaire aura lieu un saros plus tard car la configuartion relative Soleil-Terre-Lune sera quasiment identique. Il y a en tout 204 séries de saros.<br/><br/>
+				<em>Survolez une éclipse pour visualiser son saros.</em>
 			</div>
 		</div>
 		
