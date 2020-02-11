@@ -35,6 +35,16 @@ body
 
 
 
+@keyframes fade-in {
+  from {opacity: 0.0;}
+  to {opacity: 1.0;}
+}
+
+
+
+
+
+
 
 
 /*Logo*/
@@ -60,25 +70,39 @@ body
 	width:100%;
 	background-color:rgb(240,240,240);
 	padding-top:10px;
-	padding-bottom:10px;
 	display:flex;
 	flex-direction:row;
-	flew-wrap:wrap;
+	flex-wrap:no-wrap;
 	justify-content:space-around;
 	align-items:center;
 }
 
 .eclipse_type_legende_symbol
-{
-	margin-left:15px;
+{	
 	margin-right:5px;
+}
+
+.eclipse_type_legende div
+{
+	padding-left:10px;
+	padding-right:10px;
+	padding-bottom:10px;
+	background-color:none;
+	border-bottom:2px solid rgba(1,1,1,0);
+	transition : all 0.15s ease-out;
+}
+.eclipse_type_legende div:hover
+{
+	
+	cursor:pointer;
+	border-bottom:2px solid rgb(0,31,63);
 }
 
 .choosen_param
 {
 	display:flex;
 	flex-direction:row;
-	flew-wrap:no-wrap;
+	flex-wrap:no-wrap;
 	justify-content:space-between;
 	padding-left:10px;
 	padding-right:10px;
@@ -127,6 +151,9 @@ body
 	grid-template-rows: 1fr;
 	text-align:center;
 	transition : all 0.2s ease;
+	
+	animation-name: fade-in;
+	animation-duration: 0.5s;
 }
 
 .eclipse_liste_container
@@ -164,7 +191,7 @@ body
 	padding-right:10px;
 	display:flex;
 	flex-direction:row;
-	flew-wrap:no-wrap;
+	flex-wrap:no-wrap;
 	justify-content:space-between;
 }
 .barre
@@ -204,7 +231,7 @@ body
 	font-size: 2.5em;
 	display:flex;
 	flex-direction:row;
-	flew-wrap:no-wrap;
+	flex-wrap:no-wrap;
 	justify-content:center;
 	align-items:center;
 }
@@ -220,10 +247,10 @@ body
 	background-color:rgb(200,200,200);
 	display:flex;
 	flex-direction:row;
-	flew-wrap:no-wrap;
+	flex-wrap:no-wrap;
 	justify-content:flex-start;
 	align-items:center;
-	padding-left:5px;
+	padding-left: 5px;
 	padding-right:5px;
 }
 
@@ -236,22 +263,38 @@ body
 	color:rgb(0,31,63);
 }
 
+.fas
+{
+	transition:all 0.3s ease-out;
+}
+.fas:hover
+{
+	transform : scale(1.25,1.25);
+	transition:all 0.3s ease-out;
+}
+
+
+
+
 .svg_container
 {
 	width:80%;
 	height:50vh;
 	margin-left:10%;
 	background-color:none;
+	
+	animation-name: fade-in;
+	animation-duration: 0.5s;
 }
 
 .axes_title
 {
-	width:90%;
+	width:88%;
 	height:10%;
 	margin-left:6%;
 	display:flex;
 	flex-direction:row;
-	flew-wrap:no-wrap;
+	flex-wrap:no-wrap;
 	justify-content:space-between;	
 }
 
@@ -259,6 +302,7 @@ svg
 {
 	width:100%;
 	height:90%;
+	
 }
 
 polyline
@@ -272,6 +316,9 @@ polyline
 	height:34vh;
 	margin-left:10%;
 	margin-top: 3vh;
+	
+	animation-name: fade-in;
+	animation-duration: 0.5s;
 }
 	
 .infos_supp_titre
@@ -284,7 +331,7 @@ polyline
 .infos_supp_multiple_columns
 {
 	font-size:1em;
-	column-count: 3;
+	column-count: 1;
 	column-gap: 10px;
 }
 
@@ -294,5 +341,6 @@ polyline
 	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 	grid-template-rows: 1fr;
 	text-align : center;
+	
 }
 
