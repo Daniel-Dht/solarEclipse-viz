@@ -510,8 +510,6 @@ svg_map.append("path") // tracés des longitudes/lattitudes
 
 var dataContinentsPath = "https://piwodlaiwo.github.io/topojson//world-continents.json";
 	
-var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
-
 d3.json(dataContinentsPath, function(error, topology) {
 	var continents = topojson.feature(topology, topology.objects.continent).features;
 
@@ -587,7 +585,9 @@ function showAllPathOnMap(){
 	});
 };
 
+var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 function showPath(d, eclipsePath) {
+	
 	var date = formatDate_Ymd(d['Calendar Date']);
 	path = eclipsePath.cartographicDegrees[ date]
 	
@@ -608,4 +608,8 @@ function showPath(d, eclipsePath) {
 
 switch_to("map");
 showGEonMap();
+
+d3.json("all_path.json", function(error, eclipsePath){				
+	showPath(data[0], eclipsePath);
+});
 });
