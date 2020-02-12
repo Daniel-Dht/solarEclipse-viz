@@ -212,8 +212,8 @@ var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
 						   .append("div")
 						   .attr("class","eclipse_liste_item")						   
-						   .on("mouseover",function(e,i){show_saros(e); GE_onemouseover(i);})
-						   .on("mouseout", function() {hide_saros(); GE_onemouseleave();})
+						   .on("mouseover",function(e,i){show_saros(e); GE_onemouseover(i);}) // showOnePathOnMap(e,i);
+						   .on("mouseout", function() {hide_saros(); GE_onemouseleave(); }) // showGEonMap();
 
 
 //Pour le formattage
@@ -315,7 +315,7 @@ d3.select(".choose_param_gamma").on("click",function()
 
 
 //Affichage d'une partie des données seulement  
-function show_only_type(type)
+function show_only_type(type) // TODO: lien avec la map
 {
 	
 	if(type=="P" || type=="A" || type=="T" || type=="H")
@@ -347,18 +347,15 @@ d3.select(".type_ALL").on("click",function(){show_only_type("ALL");});
 var date_scale=d3.scaleTime()
      				.domain(d3.extent(data, function(d) {return d['Calendar Date'];}))
 					.range([0.02*svg_height,0.92*svg_height]);
-					      
-    
+					         
 var duration_scale=d3.scaleTime()
 				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
-				.range([0.02*svg_height,0.92*svg_height]); 
-				
+				.range([0.02*svg_height,0.92*svg_height]); 				
 				
 var magnitude_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
 				.range([0.02*svg_height,0.92*svg_height]); 
-				
-				
+								
 var path_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
 				.range([0.02,0.92*svg_height]); 
@@ -378,9 +375,7 @@ svg_saros.selectAll("polyline")
 									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
 									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
 									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()});
-	 
-	 
-	 
+	  
 //Affichage des axes
 svg_saros.append("line")
    .attr("x1",(0.08*svg_width).toString())
@@ -639,3 +634,6 @@ GE_interaction();
 switch_to("map");
 
 });
+
+
+
