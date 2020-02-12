@@ -544,11 +544,13 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 		})
 	}
 	function showOnePathOnMap(id){
-		let success;
-		d3.json("all_paths.json", function(error, eclipsePath){				
-			success =  showPath(id, eclipsePath);				
+		
+		d3.json("all_paths.json", function(eclipsePath){	
+					
+			showPath(id, eclipsePath);		
+					
 		});
-		return success; // don't work due to async behavior
+		//return success; // don't work due to async behavior
 	}
 	function showAllPathOnMap(){
 		d3.json("all_paths.json", function(error, eclipsePath){		
@@ -562,6 +564,7 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 	function showPath(id, eclipsePath) {
 		var d = data[id];
 		var date = formatDate_Ymd(d['Calendar Date']);
+	
 		path = eclipsePath.cartographicDegrees[date];
 
 		if(path == undefined) {
@@ -607,10 +610,10 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 function GE_onemouseover(i1){
 	// hide all + show path
 	path_exist = showOnePathOnMap(i1);
-	console.log("2->", path_exist)
-	if(!path_exist){
-		d3.select(".infos_supp_multiple_columns_map").html('éclipse sans trajectoires')
-	}
+	// console.log("2->", path_exist)
+	// if(!path_exist){
+	// 	d3.select(".infos_supp_multiple_columns_map").html('éclipse sans trajectoires')
+	// }
 
 	svg_map.selectAll('circle')
 		.style('visibility', function(d2,i2){						
@@ -622,7 +625,7 @@ function GE_onemouseover(i1){
 		})	
 }
 function GE_onemouseleave(){
-	d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
+	//d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
 	svg_path.selectAll('circle').remove();
 	svg_map.selectAll('circle').style('visibility',"visible");
 }
