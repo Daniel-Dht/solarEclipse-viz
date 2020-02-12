@@ -545,7 +545,7 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 	}
 	function showOnePathOnMap(id){
 		
-		d3.json("all_paths.json", function(eclipsePath){	
+		d3.json("https://raw.githubusercontent.com/Daniel-Dht/solarEclipse-viz/master/all_paths.json", function(eclipsePath){	
 					
 			showPath(id, eclipsePath);		
 					
