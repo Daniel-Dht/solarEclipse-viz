@@ -199,7 +199,7 @@ function hide_saros()
 	 
 	
 	//On supprime les cercles 
-	d3.selectAll("circle").remove();
+	svg_saros.selectAll("circle").remove();
 	
 	//On remet les polyline par defaut 
 	d3.selectAll("polyline").attr("stroke","rgba(200,200,200,0.1)")
@@ -212,8 +212,8 @@ var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
 						   .append("div")
 						   .attr("class","eclipse_liste_item")						   
-						   .on("mouseover",function(e,i){show_saros(e); showOnePathOnMap(e,i);})
-						   .on("mouseout", function() {hide_saros(); showGEonMap();})
+						   .on("mouseover",function(e,i){show_saros(e); GE_onemouseover(i);})
+						   .on("mouseout", function() {hide_saros(); GE_onemouseleave();})
 
 
 //Pour le formattage
@@ -479,7 +479,13 @@ svg_saros.append("polygon")
 //***************************************************************************** */
 //****************************   MAP        *********************************** */
 //***************************************************************************** */
-var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+// layers:
+var svg_continent = svg_map.append('g');
+
+var svg_path = svg_map.append('g');
+var svg_GE = svg_map.append('g');
+
 var graticule = d3.geoGraticule();
 
 var projection = d3.geoKavrayskiy7()
@@ -488,128 +494,148 @@ var projection = d3.geoKavrayskiy7()
 	.precision(.1)
 	.rotate([-11,0]);
 
-var path = d3.geoPath().projection(projection);
-
-svg_map.append("defs").append("path") // contour du monde
-	.datum({type: "Sphere"})
-	.attr("id", "sphere")
-	.attr("d", path)
-	//.attr("color", "none");  
-
-svg_map.append("use") // contour du monde
-	.attr("class", "stroke")
-	.attr("xlink:href", "#sphere")
-	.style("fill", "rgb(230,230,230)");  
-
-svg_map.append("path") // tracés des longitudes/lattitudes
-	.datum(graticule)
-	.attr("class", "graticule")
-	.attr("d", path)
-	.style("fill", "none");  
+var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 
 
-var dataContinentsPath = "https://piwodlaiwo.github.io/topojson//world-continents.json";
-	
-d3.json(dataContinentsPath, function(error, topology) {
-	var continents = topojson.feature(topology, topology.objects.continent).features;
+// affichage des GE de chaque eclipses sur la map
+{ 
+	function showContinents(){
 
-	svg_map.selectAll(".continent")
-	.data(continents)
-	.enter()
-	.append("path")
-	.attr("d", path)
-	.attr("title", function(d,i) { 
-		return d.properties.continent;
-	})
-	.style("fill", "rgb(0, 31, 63)")   //function(d, i) { return color(i); });
-	// .on("mouseover", function(d) {        	
-	// 	d3.select(this)
-	// 		.transition()
-	// 		.duration(200)
-	// 		.style("fill", "red");     		
-	// })
-	// .on("mouseout", function(d) {        	
-	// 	d3.select(this)
-	// 		.transition()
-	// 		.duration(200)
-	// 		.style("fill", "rgb(0, 31, 63)");     		
-	// });	
-})
+		var path = d3.geoPath().projection(projection);
 
+		svg_continent.append("defs").append("path") // contour du monde
+			.datum({type: "Sphere"})
+			.attr("id", "sphere")
+			.attr("d", path)
+			//.attr("color", "none");  
 
-function showGEonMap(){
-	d3.selectAll("circle").remove();
-	
-	data.forEach(function(d,i)
-  	{       
-		var point = [d['Longitude'], d['Latitude']]
-		var proj = projection(point)
-		svg_map.append('circle')
-			.attr("cx",proj[0]) 
-			.attr("cy",proj[1])
-			.attr("r", 0.1*path_scale(d['Path Width (km)']))
-			.style("fill","green")
-			.style('opacity','0.5')
-			.on("mouseenter", function() {			
-				showOnePathOnMap(d,i) 		
+		svg_continent.append("use") // contour du monde
+			.attr("class", "stroke")
+			.attr("xlink:href", "#sphere")
+			.style("fill", "rgb(230,230,230)");  
+
+		svg_continent.append("path") // tracés des longitudes/lattitudes
+			.datum(graticule)
+			.attr("class", "graticule")
+			.attr("d", path)
+			.style("fill", "none");  
+
+		// Affichage des continents		
+		var dataContinentsPath = "https://piwodlaiwo.github.io/topojson//world-continents.json";
+		d3.json(dataContinentsPath, function(error, topology) {
+			var continents = topojson.feature(topology, topology.objects.continent).features;
+
+			svg_continent.selectAll(".continent")
+			.data(continents)
+			.enter()
+			.append("path")
+			.attr("d", path)
+			.attr("title", function(d,i) { 
+				return d.properties.continent;
+			})
+			.style("fill", "rgb(0, 31, 63)")   //function(d, i) { return color(i); });
+			// .on("mouseover", function(d) {        	
+			// 	d3.select(this)
+			// 		.transition()
+			// 		.duration(200)
+			// 		.style("fill", "red");     		
+			// })
+			// .on("mouseout", function(d) {        	
+			// 	d3.select(this)
+			// 		.transition()
+			// 		.duration(200)
+			// 		.style("fill", "rgb(0, 31, 63)");     		
+			// });	
+		})
+	}
+	function showOnePathOnMap(id){
+		let success;
+		d3.json("all_paths.json", function(error, eclipsePath){				
+			success =  showPath(id, eclipsePath);				
+		});
+		return success; // don't work due to async behavior
+	}
+	function showAllPathOnMap(){
+		d3.json("all_paths.json", function(error, eclipsePath){		
+			for(var i=0; i< data.length; i++)
+			{			
+				showPath(i, eclipsePath);
+			}
+		});
+	};
+
+	function showPath(id, eclipsePath) {
+		var d = data[id];
+		var date = formatDate_Ymd(d['Calendar Date']);
+		path = eclipsePath.cartographicDegrees[date];
+
+		if(path == undefined) {
+			return false;
+		}
+		
+		for(var i=0; i< path.length; i+=2){        
+			var point = [path[i], path[i+1]]
+			var proj = projection(point)
+			svg_path.append('circle')
+				.attr("cx",proj[0]) 
+				.attr("cy",proj[1])
+				.attr("r",1)
+				.style("fill","green")
+		}  
+		return true;
+	};
+
+	function showGEonMap(){
+		data.forEach(function(d,i)
+		{       
+			var point = [d['Longitude'], d['Latitude']]
+			var proj = projection(point)
+			svg_GE.append('circle')
+				.attr("cx",proj[0]) 
+				.attr("cy",proj[1])
+				.attr("r", 0.1*path_scale(d['Path Width (km)']))
+				.style("fill","green")
+				.style('opacity','0.5')
+		}); 
+	};
+	function GE_interaction(){
+		svg_GE.selectAll('circle')
+			.on("mouseenter", function(d1,i1) {			
+				GE_onemouseover(i1);
 			})
 			.on("mouseleave", function() {      
-				showGEonMap()	
+				GE_onemouseleave();
 			});
-	}); 
-};
-
-function showOnePathOnMap(d,i){
-	// hide all circle expet the one on which the mouse is over,
-	// then show its path
-	d3.selectAll("circle").style('visibility',function(c_i,i2)
-	{					
-		if(i == i2){						
-			return 'visible';
-		} else{
-			return 'hidden';
-		}			
-	});
-
-	d3.json("all_path.json", function(error, eclipsePath){				
-		showPath(d, eclipsePath);
-	});
+	}
 }
 
-function showAllPathOnMap(){
-	d3.json("all_path.json", function(error, eclipsePath){		
-		for(var i=0; i< data.length; i++)
-  		{			
-			showPath(data[i], eclipsePath);
-		}
-	});
-};
-
-var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
-function showPath(d, eclipsePath) {
-	
-	var date = formatDate_Ymd(d['Calendar Date']);
-	path = eclipsePath.cartographicDegrees[ date]
-	
-	if(path == undefined) {
-		return;
+function GE_onemouseover(i1){
+	// hide all + show path
+	path_exist = showOnePathOnMap(i1);
+	console.log("2->", path_exist)
+	if(!path_exist){
+		d3.select(".infos_supp_multiple_columns_map").html('éclipse sans trajectoires')
 	}
 
-	for(var i=0; i< path.length; i+=2){        
-		var point = [path[i], path[i+1]]
-		var proj = projection(point)
-		svg_map.append('circle')
-			.attr("cx",proj[0]) 
-			.attr("cy",proj[1])
-			.attr("r",1)
-			.style("fill","green")
-	}  
-};
+	svg_map.selectAll('circle')
+		.style('visibility', function(d2,i2){						
+			if(i1==i2){
+				return "visible";                
+			} else { 
+				return "hidden";
+			}						
+		})	
+}
+function GE_onemouseleave(){
+	d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
+	svg_path.selectAll('circle').remove();
+	svg_map.selectAll('circle').style('visibility',"visible");
+}
+
+showContinents();
+showGEonMap();
+GE_interaction();
 
 switch_to("map");
-showGEonMap();
 
-d3.json("all_path.json", function(error, eclipsePath){				
-	showPath(data[0], eclipsePath);
-});
 });
