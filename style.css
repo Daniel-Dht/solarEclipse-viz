@@ -281,28 +281,88 @@ body
 	width:80%;
 	height:50vh;
 	margin-left:10%;
+	margin-top:3vh;
+	margin-bottom:2vh;
 	background-color:none;
 	
 	animation-name: fade-in;
 	animation-duration: 0.5s;
 }
 
+
 .axes_title
 {
-	width:88%;
+	width:100%;
 	height:10%;
-	margin-left:6%;
-	display:flex;
-	flex-direction:row;
-	flex-wrap:no-wrap;
-	justify-content:space-between;	
+	
+	display:grid;
+	grid-template-columns: 19% 35% 19% 21%;
+	grid-template-rows: 1fr;
+	
+	text-align:center;
+}
+
+.axes_title span span
+{
+	padding-left:7px;
+	padding-right:7px;
+	padding-top:2px;
+	padding-bottom:4px;
+	border-radius:5px;
+	background-color:rgb(0,31,63);
+	color:white;
+}
+
+.axes_title span:last-child
+{
+	text-align:right;
+}
+
+/*Le doble slider */
+.slider_container
+{
+	width:80%;
+	margin:auto;
+}
+	
+.slider_container .irs-bar
+{
+	background:rgb(0,31,63);
+}
+.slider_container .irs-handle
+{
+	border-color:rgb(0,31,63);
+	box-shadow : 0 1px 3px rgba(0,0,0,0.3);
+}
+.slider_container .irs-from
+{
+	background-color:rgb(0,31,63);
+}
+.slider_container .irs-from:before
+{
+	border-top-color:rgb(0,31,63);
+}
+.slider_container .irs-to
+{
+	background-color:rgb(0,31,63);
+}
+.slider_container .irs-to:before
+{
+	border-top-color:rgb(0,31,63);
+}
+.slider_container .irs-single
+{
+	background-color:rgb(0,31,63);
+}
+.slider_container .irs-single:before
+{
+	border-top-color:rgb(0,31,63);
 }
 
 svg
 {
 	width:100%;
 	height:90%;
-	
 }
 
 polyline

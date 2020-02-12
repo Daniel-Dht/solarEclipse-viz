@@ -21,8 +21,6 @@ var map_button=d3.select(".fa-map-marker-alt");
 var saros_button=d3.select(".fa-history");
 var switch_button=d3.select(".switch");
 
-
-
 function switch_to(zone)
 {
 	if(zone=="saros")
@@ -35,7 +33,6 @@ function switch_to(zone)
 		saros_button.style("color","rgb(0,31,63)");
 		map_button.style("color","rgb(200,200,200)");
 		switch_button.style("justify-content","flex-end");
-
 	}
 	else 
 	{
@@ -47,10 +44,9 @@ function switch_to(zone)
 		map_button.style("color","rgb(0,31,63)");
 		saros_button.style("color","rgb(200,200,200)");
 		switch_button.style("justify-content","flex-start");
-		//showGEonMap();
 	}
 }
-
+switch_to("map");
 
 
 map_button.on("click",function(){switch_to("map");});
@@ -69,6 +65,8 @@ function parseLongitude(longitude){
 	if(longitude.slice(-1)=='W') val*=-1;
 	return  val; 
 }
+
+//Lecture du jeu de données
 var parseDate = d3.timeParse("%_Y %B %e");
 var parseTime = d3.timeParse("%H:%M:%S");
 var parseDuration = d3.timeParse("%Mm%Ss");
@@ -93,7 +91,6 @@ var data = d3.csv('solar_1950_2050.csv', function(error, data){
 		d['Central Duration']=parseDuration(d['Central Duration']);
 		d['Longitude']=parseLongitude(d['Longitude']);
 		d['Latitude']=parseLatitude(d['Latitude']);
-
 		//Traitement des données manquantes : mises nulles
 		if(isNaN(d['Path Width (km)']))
 		{
@@ -199,7 +196,7 @@ function hide_saros()
 	 
 	
 	//On supprime les cercles 
-	svg_saros.selectAll("circle").remove();
+	d3.selectAll(".svg_saros circle").remove();
 	
 	//On remet les polyline par defaut 
 	d3.selectAll("polyline").attr("stroke","rgba(200,200,200,0.1)")
@@ -211,9 +208,9 @@ function hide_saros()
 var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
 						   .append("div")
-						   .attr("class","eclipse_liste_item")						   
-						   .on("mouseover",function(e,i){show_saros(e); GE_onemouseover(i);}) // showOnePathOnMap(e,i);
-						   .on("mouseout", function() {hide_saros(); GE_onemouseleave(); }) // showGEonMap();
+						   .attr("class","eclipse_liste_item")
+						   .on("mouseover",function(e){show_saros(e);GE_onemouseover(e['Catalog Number']-9442);})
+						   .on("mouseout",function(){hide_saros();GE_onemouseleave();})
 
 
 //Pour le formattage
@@ -315,7 +312,19 @@ d3.select(".choose_param_gamma").on("click",function()
 
 
 //Affichage d'une partie des données seulement  
-function show_only_type(type) // TODO: lien avec la map
+function show_only_date(mini_year,maxi_year)
+{
+	var convertToDate=d3.timeParse("%d/%m/%Y");
+	var date_min=convertToDate("01/01/"+mini_year.toString());
+	var date_max=convertToDate("01/01/"+(maxi_year+1).toString());
+	
+	items.style("display",function(d)
+								{
+									if(d['Calendar Date']>date_min && d['Calendar Date']<date_max){return "grid";}
+									else{return "none";}
+								});
+} 
+function show_only_type(type)
 {
 	
 	if(type=="P" || type=="A" || type=="T" || type=="H")
@@ -333,29 +342,83 @@ function show_only_type(type) // TODO: lien avec la map
 	}
 } 
 
-show_only_type("ALL");
-d3.select(".type_P").on("click",function(){show_only_type("P");});
-d3.select(".type_A").on("click",function(){show_only_type("A");});
-d3.select(".type_T").on("click",function(){show_only_type("T");});
-d3.select(".type_H").on("click",function(){show_only_type("H");});
-d3.select(".type_ALL").on("click",function(){show_only_type("ALL");});
+function show_only_type_and_date(type,mini_year,maxi_year)
+{
+	var convertToDate=d3.timeParse("%d/%m/%Y");
+	var date_min=convertToDate("01/01/"+mini_year.toString());
+	var date_max=convertToDate("01/01/"+(maxi_year+1).toString());
+	
+	
+	if(type=="P" || type=="A" || type=="T" || type=="H")
+	{
+		items.style("display",function(d)
+								{
+									if(d['Eclipse Type'].substring(0,1)==type && d['Calendar Date']>date_min && d['Calendar Date']<date_max){return "grid";}
+									else{return "none";}
+								}
+								);
+	}
+	else
+	{
+		items.style("display",function(d)
+								{
+									if(d['Calendar Date']>date_min && d['Calendar Date']<date_max){return "grid";}
+									else{return "none";}
+								});
+	}
+} 
 
-	   
+
+var selected_type="ALL";
+d3.select(".type_P").on("click",function(){selected_type="P";show_only_type_and_date("P",min_year,max_year);});
+d3.select(".type_A").on("click",function(){selected_type="A";show_only_type_and_date("A",min_year,max_year);});
+d3.select(".type_T").on("click",function(){selected_type="T";show_only_type_and_date("T",min_year,max_year);});
+d3.select(".type_H").on("click",function(){selected_type="H";show_only_type_and_date("H",min_year,max_year);});
+d3.select(".type_ALL").on("click",function(){selected_type="ALL";show_only_type_and_date("ALL",min_year,max_year);});
+
+//Slider date
+var min_year=1970;
+var max_year=2070;
+$(".date_slider").ionRangeSlider({
+        type: "double",
+		skin: "round",
+        grid: true,
+        min: 1970,
+        max: 2070,
+        from: 1970,
+        to: 2070,
+		onChange : function(data){min_year=data.from_pretty;
+								  max_year=data.to_pretty;
+								  max_year=parseInt(max_year.substring(0,1)+max_year.substring(2,5));
+								  min_year=parseInt(min_year.substring(0,1)+min_year.substring(2,5));
+								  show_only_type_and_date(selected_type,min_year,max_year);}
+    });
+
+//init
+show_only_type_and_date(selected_type,min_year,max_year);	
+	
+	
+	
+	
+	
 // AFFICHAGE DU GRAPHE DES SAROS
 
 //Les echelles
 var date_scale=d3.scaleTime()
      				.domain(d3.extent(data, function(d) {return d['Calendar Date'];}))
 					.range([0.02*svg_height,0.92*svg_height]);
-					         
+					      
+    
 var duration_scale=d3.scaleTime()
 				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
-				.range([0.02*svg_height,0.92*svg_height]); 				
+				.range([0.02*svg_height,0.92*svg_height]); 
+				
 				
 var magnitude_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
 				.range([0.02*svg_height,0.92*svg_height]); 
-								
+				
+				
 var path_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
 				.range([0.02,0.92*svg_height]); 
@@ -375,7 +438,9 @@ svg_saros.selectAll("polyline")
 									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
 									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
 									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()});
-	  
+	 
+	 
+	 
 //Affichage des axes
 svg_saros.append("line")
    .attr("x1",(0.08*svg_width).toString())
@@ -468,9 +533,7 @@ svg_saros.append("polygon")
 					+" ")
    .attr("stroke","none")
    .attr("fill","black");
-
-  
-
+   
 //***************************************************************************** */
 //****************************   MAP        *********************************** */
 //***************************************************************************** */
@@ -484,7 +547,7 @@ var svg_GE = svg_map.append('g');
 var graticule = d3.geoGraticule();
 
 var projection = d3.geoKavrayskiy7()
-	.scale(170)
+	.scale(97)
 	.translate([svg_width / 2, svg_height / 2])
 	.precision(.1)
 	.rotate([-11,0]);
@@ -507,7 +570,7 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 		svg_continent.append("use") // contour du monde
 			.attr("class", "stroke")
 			.attr("xlink:href", "#sphere")
-			.style("fill", "rgb(230,230,230)");  
+			.style("fill", "rgb(245,245,245)");  
 
 		svg_continent.append("path") // tracés des longitudes/lattitudes
 			.datum(graticule)
@@ -555,11 +618,12 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 	function showAllPathOnMap(){
 		d3.json("all_paths.json", function(error, eclipsePath){		
 			for(var i=0; i< data.length; i++)
-			{			
+			{
 				showPath(i, eclipsePath);
 			}
 		});
 	};
+	
 
 	function showPath(id, eclipsePath) {
 		var d = data[id];
@@ -574,7 +638,7 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 		for(var i=0; i< path.length; i+=2){        
 			var point = [path[i], path[i+1]]
 			var proj = projection(point)
-			svg_path.append('circle')
+			svg_path.append("circle")
 				.attr("cx",proj[0]) 
 				.attr("cy",proj[1])
 				.attr("r",1)
@@ -582,20 +646,25 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 		}  
 		return true;
 	};
+	
+	
+
 
 	function showGEonMap(){
 		data.forEach(function(d,i)
 		{       
 			var point = [d['Longitude'], d['Latitude']]
 			var proj = projection(point)
+			//console.log(point);
 			svg_GE.append('circle')
 				.attr("cx",proj[0]) 
 				.attr("cy",proj[1])
-				.attr("r", 0.1*path_scale(d['Path Width (km)']))
+				.attr("r", 0.05*path_scale(d['Path Width (km)']))
 				.style("fill","green")
 				.style('opacity','0.5')
 		}); 
 	};
+	
 	function GE_interaction(){
 		svg_GE.selectAll('circle')
 			.on("mouseenter", function(d1,i1) {			
@@ -614,6 +683,7 @@ function GE_onemouseover(i1){
 	// if(!path_exist){
 	// 	d3.select(".infos_supp_multiple_columns_map").html('éclipse sans trajectoires')
 	// }
+	
 
 	svg_map.selectAll('circle')
 		.style('visibility', function(d2,i2){						
@@ -624,7 +694,7 @@ function GE_onemouseover(i1){
 			}						
 		})	
 }
-function GE_onemouseleave(){
+function GE_onemouseleave(mini_year,maxi_year){
 	//d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
 	svg_path.selectAll('circle').remove();
 	svg_map.selectAll('circle').style('visibility',"visible");
@@ -636,7 +706,5 @@ GE_interaction();
 
 switch_to("map");
 
+  
 });
-
-
-
