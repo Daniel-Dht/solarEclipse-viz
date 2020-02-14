@@ -10,7 +10,6 @@ svg_saros.attr("viewBox","0 0 "+svg_width.toString()+" "+svg_height.toString());
 svg_map.attr("viewBox","0 0 "+svg_width.toString()+" "+svg_height.toString());
 
 
-
 //Switch
 var svg_container_map=d3.select(".svg_container_map");
 var infos_supp_map=d3.select(".infos_supp_map");
@@ -114,7 +113,8 @@ function show_saros(e)
 {
 	//Titre : Soros et son numéro
 	d3.select(".infos_supp_titre_saros")
-	  .text("Saros "+ e['Saros Number'].toString());
+	  .text("Saros "+ e['Saros Number'].toString())
+	  .style("font-size","0.9em");
 	  
 	//On repasse en 1 seule colomnes  
 	d3.select(".infos_supp_multiple_columns_saros")
@@ -188,7 +188,8 @@ function hide_saros()
 {
 	//On repasse au texte par defaut
 	d3.select(".infos_supp_titre_saros")
-	  .text("Saros");
+	  .text("Saros")
+	  .style("font-size","2em");
 	
 	//On repasse au texte par defaut 
 	d3.select(".infos_supp_multiple_columns_saros")
@@ -611,7 +612,7 @@ var graticule = d3.geoGraticule();
 
 
 var projection = d3.geoKavrayskiy7()
-	.scale(115)
+	.scale(115*svg_width/769)
 	.translate([svg_width / 2, svg_height / 2])
 	.precision(.1)
 	.rotate([-11,0]);
@@ -1059,8 +1060,6 @@ function update_box_plot(stats)
 		   .attr("stroke-width","1.5");
 }
 
-update_box_plot(stats_data);
-
 
 var formatDureeStats = d3.timeFormat("%M:%S");
 function convert_min_sec(duree)
@@ -1130,6 +1129,6 @@ function show_box_data(mini_year,maxi_year)
 	update_box_plot(stats_period);	
 }
 
-
+show_box_data(1970,2070);
 
 });
