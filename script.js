@@ -39,7 +39,7 @@ function switch_to(zone)
 		svg_container_saros.style("display","none");
 		infos_supp_saros.style("display","none");
 		svg_container_map.style("display","block");
-		infos_supp_map.style("display","block");
+		infos_supp_map.style("display","grid");
 		
 		map_button.style("color","rgb(0,31,63)");
 		saros_button.style("color","rgb(200,200,200)");
@@ -391,7 +391,11 @@ $(".date_slider").ionRangeSlider({
 								  max_year=data.to_pretty;
 								  max_year=parseInt(max_year.substring(0,1)+max_year.substring(2,5));
 								  min_year=parseInt(min_year.substring(0,1)+min_year.substring(2,5));
-								  show_only_type_and_date(selected_type,min_year,max_year);}
+								  
+								  show_only_type_and_date(selected_type,min_year,max_year);
+								  show_period_data(min_year,max_year);
+								  show_box_data(min_year,max_year);
+								  show_treemap_data(min_year,max_year);}
     });
 
 //init
@@ -546,8 +550,9 @@ var svg_GE = svg_map.append('g');
 
 var graticule = d3.geoGraticule();
 
+
 var projection = d3.geoKavrayskiy7()
-	.scale(97)
+	.scale(115)
 	.translate([svg_width / 2, svg_height / 2])
 	.precision(.1)
 	.rotate([-11,0]);
@@ -706,5 +711,366 @@ GE_interaction();
 
 switch_to("map");
 
-  
+
+
+
+
+///////////
+//Treeemap
+///////////
+treemap_svg=d3.select(".treemap_svg");
+
+var treemap_svg_size=0.87*(document.getElementsByClassName("infos_supp_mat_left")[0].offsetHeight);
+
+var treemap_svg_width = (document.getElementsByClassName("infos_supp_mat_left_titles")[0].offsetWidth)
+					   +(document.getElementsByClassName("infos_supp_mat_left_min_vals")[0].offsetWidth)
+					   +(document.getElementsByClassName("infos_supp_mat_left_max_vals")[0].offsetWidth)
+					   +0.87*(document.getElementsByClassName("infos_supp_mat_left")[0].offsetHeight);
+					   
+
+treemap_svg.style("width",treemap_svg_width);
+treemap_svg.style("height",treemap_svg_size);
+treemap_svg.attr("viewBox","0 0 "+treemap_svg_width.toString()+" "+treemap_svg_size.toString());
+
+
+
+function show_treemap_data(mini_year,maxi_year)
+{
+	//Nb eclipses
+	var nb_eclipses_P=0;
+	var nb_eclipses_A=0;
+	var nb_eclipses_T=0;
+	var nb_eclipses_H=0;
+	
+	for(var i=0 ; i<data.length ;i=i+1)
+	{
+		var year=parseInt(data[i]['Calendar Date'].toString().substring(11,15));
+		var type=data[i]['Eclipse Type'].toString().substring(0,1);
+		
+		if(year>=mini_year && year<=maxi_year)
+		{
+			if(type=="P"){nb_eclipses_P+=1;}
+			if(type=="A"){nb_eclipses_A+=1;}
+			if(type=="T"){nb_eclipses_T+=1;}
+			if(type=="H"){nb_eclipses_H+=1;}
+		}
+	}
+	
+	//Calcul de la treemap
+	var data_treemap={
+	"name":"Root",
+	"children":[{"name":"◐","value":nb_eclipses_P},
+					{"name":"⦿","value":nb_eclipses_A},
+					{"name":"⬤","value":nb_eclipses_T},
+					{"name":"◍","value":nb_eclipses_H}]
+	}
+	
+	var root = d3.hierarchy(data_treemap);
+	var treemapLayout = d3.treemap();
+	treemapLayout
+	  .size([treemap_svg_width, treemap_svg_size])
+	  .paddingOuter(10)
+	  .paddingInner(2)
+	  .tile(d3.treemapSquarify.ratio(1));
+	 
+	root.sum(function(d) {
+	  return d.value;
+	});
+
+	treemapLayout(root);
+	
+	treemap_svg.html("");
+
+	treemap_svg.selectAll('rect')
+	  .data(root.descendants())
+	  .enter()
+	  .append('rect')
+	  .attr('x', function(d) { return d.x0; })
+	  .attr('y', function(d) { return d.y0; })
+	  .attr('width', function(d) { return d.x1 - d.x0; })
+	  .attr('height', function(d) { return d.y1 - d.y0; })
+	  .attr('fill', function(d,i) {if(i==0){return "white";} return "rgb(0,31,63)";});
+	  
+
+	treemap_svg.selectAll('text')
+	  .data(root.descendants())
+	  .enter()
+	  .append('text')
+	  .text(function(d,i) 
+			{
+				if(i==0){return "";}
+				if(d.data.value==0) {return "";}
+				return d.data.name + " " +d.data.value.toString();
+			})
+	  .attr("x",function(d) { return d.x0+2;})
+	  .attr("y",function(d,i) { if(i==4){return d.y0+9;} return d.y0+13;})
+	  .attr("font-size",function(d,i) {if(i==4){return "9";} return "12";})
+	  .attr("fill","rgba(255,255,255,0.9)");
+
+}
+
+show_treemap_data(1970,2070);
+
+
+
+
+
+/////////////////
+//Periode data
+////////////////
+
+function show_period_data(mini_year,maxi_year)
+{
+	//Periode
+	d3.select(".infos_supp_mat_middle_period").text(mini_year.toString()+" - "+maxi_year.toString());
+	//Duree
+	var intervalle=maxi_year-mini_year+1;
+	d3.select(".infos_supp_mat_middle_nb_years").text(function(){
+													if(intervalle>1){return intervalle.toString()+" ans";}
+													else {return intervalle.toString()+" an"}
+													});
+	//Nb eclipses
+	var nb_eclipses=0;
+	for(var i=0 ; i<data.length ;i=i+1)
+	{
+		var year=parseInt(data[i]['Calendar Date'].toString().substring(11,15));
+		if(year>=mini_year && year<=maxi_year){nb_eclipses=nb_eclipses+1;}
+	}
+	d3.select(".infos_supp_mat_middle_nb_eclipses").text(function(){
+													if(nb_eclipses>1){return nb_eclipses.toString()+" éclipses";}
+													else {return nb_eclipses.toString()+" éclipse"}
+													});
+													
+	//Taux d'eclipses
+	d3.select(".infos_supp_mat_middle_eclipses_rate").text((nb_eclipses/intervalle).toString().substring(0,4)+" éclipses/an");
+}
+
+show_period_data(1970,2070);
+
+
+
+
+/////////////////
+//Box plot
+/////////////////
+box_svg=d3.select(".box_svg");
+
+var box_svg_size=0.87*(document.getElementsByClassName("infos_supp_mat_left")[0].offsetHeight);
+box_svg.style("width",treemap_svg_size);
+box_svg.style("height",treemap_svg_size);
+box_svg.attr("viewBox","0 0 100 100");
+
+// ligne 1
+box_svg.append("line")
+	   .attr("x1","0")
+	   .attr("x2","100")
+	   .attr("y1",(100/6).toString())
+	   .attr("y2",(100/6).toString())
+	   .attr("stroke","rgb(0,31,63)")
+	   .attr("stroke-width","0.8");
+// ligne 2   
+box_svg.append("line")
+	   .attr("x1","0")
+	   .attr("x2","100")
+	   .attr("y1",(3*100/6).toString())
+	   .attr("y2",(3*100/6).toString())
+	   .attr("stroke","rgb(0,31,63)")
+	   .attr("stroke-width","0.8");
+// ligne 3
+box_svg.append("line")
+	   .attr("x1","0")
+	   .attr("x2","100")
+	   .attr("y1",(5*100/6).toString())
+	   .attr("y2",(5*100/6).toString())
+	   .attr("stroke","rgb(0,31,63)")
+	   .attr("stroke-width","0.8");
+
+var stats_data={"Duree":{"mu":85,"sigma":4},
+				"Ratio":{"mu":38,"sigma":12},
+			    "Longueur":{"mu":53,"sigma":20}};
+				
+function update_box_plot(stats)
+{
+	//on clean ce qu'il y a deja
+	box_svg.selectAll("circle").remove();
+	box_svg.selectAll(".big_line").remove();
+	box_svg.selectAll(".limit").remove();
+	
+	//On ajoute la moyenne
+	//Duree
+	box_svg.append("circle")
+			.attr("cx",stats.Duree.mu.toString()) 
+			.attr("cy",(100/6).toString())
+			.attr("r",3)
+			.style("fill","rgb(0,31,63)");
+	//Ratio
+	box_svg.append("circle")
+			.attr("cx",stats.Ratio.mu.toString()) 
+			.attr("cy",(3*100/6).toString())
+			.attr("r",3)
+			.style("fill","rgb(0,31,63)");
+	//Longueur
+	box_svg.append("circle")
+			.attr("cx",stats.Longueur.mu.toString()) 
+			.attr("cy",(5*100/6).toString())
+			.attr("r",3)
+			.style("fill","rgb(0,31,63)");
+
+	//On ajoute l'ecart-type (ligne centrale)
+	//Duree
+	box_svg.append("line")
+			.attr("class","big_line")
+			.attr("x1",(stats.Duree.mu-stats.Duree.sigma).toString())
+		   .attr("x2",(stats.Duree.mu+stats.Duree.sigma).toString())
+		   .attr("y1",(100/6).toString())
+		   .attr("y2",(100/6).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","2.5");
+	//Ratio
+	box_svg.append("line")
+			.attr("class","big_line")
+			.attr("x1",(stats.Ratio.mu-stats.Ratio.sigma).toString())
+		   .attr("x2",(stats.Ratio.mu+stats.Ratio.sigma).toString())
+		   .attr("y1",(3*100/6).toString())
+		   .attr("y2",(3*100/6).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","2.5");
+	//Longueur
+	box_svg.append("line")
+			.attr("class","big_line")
+			.attr("x1",(stats.Longueur.mu-stats.Longueur.sigma).toString())
+		   .attr("x2",(stats.Longueur.mu+stats.Longueur.sigma).toString())
+		   .attr("y1",(5*100/6).toString())
+		   .attr("y2",(5*100/6).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","2.5");
+		   
+		   
+	//On ajoute l'ecart-type (bornes)
+	//Duree
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Duree.mu-stats.Duree.sigma).toString())
+		   .attr("x2",(stats.Duree.mu-stats.Duree.sigma).toString())
+		   .attr("y1",(100/6+3).toString())
+		   .attr("y2",(100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Duree.mu+stats.Duree.sigma).toString())
+		   .attr("x2",(stats.Duree.mu+stats.Duree.sigma).toString())
+		   .attr("y1",(100/6+3).toString())
+		   .attr("y2",(100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+	//Ratio
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Ratio.mu-stats.Ratio.sigma).toString())
+		   .attr("x2",(stats.Ratio.mu-stats.Ratio.sigma).toString())
+		   .attr("y1",(3*100/6+3).toString())
+		   .attr("y2",(3*100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Ratio.mu+stats.Ratio.sigma).toString())
+		   .attr("x2",(stats.Ratio.mu+stats.Ratio.sigma).toString())
+		   .attr("y1",(3*100/6+3).toString())
+		   .attr("y2",(3*100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+	//Longueur
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Longueur.mu-stats.Longueur.sigma).toString())
+		   .attr("x2",(stats.Longueur.mu-stats.Longueur.sigma).toString())
+		   .attr("y1",(5*100/6+3).toString())
+		   .attr("y2",(5*100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+	box_svg.append("line")
+			.attr("class","limit")
+			.attr("x1",(stats.Longueur.mu+stats.Longueur.sigma).toString())
+		   .attr("x2",(stats.Longueur.mu+stats.Longueur.sigma).toString())
+		   .attr("y1",(5*100/6+3).toString())
+		   .attr("y2",(5*100/6-3).toString())
+		   .attr("stroke","rgb(0,31,63)")
+		   .attr("stroke-width","1.5");
+}
+
+update_box_plot(stats_data);
+
+
+var formatDureeStats = d3.timeFormat("%M:%S");
+function convert_min_sec(duree)
+{
+	var duration = formatDureeStats(duree);
+	var float_duration=parseFloat(duration.substring(0,2))+parseFloat(duration.substring(3,5))/60;
+	return float_duration;
+}
+
+var scale_stat_duree = d3.scaleLinear().domain(d3.extent(data,function(d){return convert_min_sec(d['Central Duration'])})).range([0,100]);
+var scale_stat_longueur = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Path Width (km)']})).range([0,100]);
+var scale_stat_ratio = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Eclipse Magnitude']})).range([0,100]);
+
+function show_box_data(mini_year,maxi_year)
+{
+	//Nb eclipses
+	var nb_eclipses=0;
+	var moy_duree=0;
+	var moy_longueur=0;
+	var moy_ratio=0;
+	for(var i=0 ; i<data.length ;i=i+1)
+	{
+		var year=parseInt(data[i]['Calendar Date'].toString().substring(11,15));
+		if(year>=mini_year && year<=maxi_year)
+		{
+			nb_eclipses=nb_eclipses+1;
+			moy_duree+=convert_min_sec(data[i]['Central Duration']);
+			moy_longueur+=data[i]['Path Width (km)'];
+			moy_ratio+=data[i]['Eclipse Magnitude'];
+		}
+	}
+	moy_duree=moy_duree/nb_eclipses;
+	moy_longueur=moy_longueur/nb_eclipses;
+	moy_ratio=moy_ratio/nb_eclipses;
+	
+	var etype_duree=0;
+	var etype_longueur=0;
+	var etype_ratio=0;
+	for(var i=0 ; i<data.length ;i=i+1)
+	{
+		var year=parseInt(data[i]['Calendar Date'].toString().substring(11,15));
+		if(year>=mini_year && year<=maxi_year)
+		{
+			etype_duree+=Math.pow((convert_min_sec(data[i]['Central Duration'])-moy_duree),2);
+			etype_longueur+=Math.pow((data[i]['Path Width (km)']-moy_longueur),2);
+			etype_ratio+=Math.pow((data[i]['Eclipse Magnitude']-moy_ratio),2);
+		}
+	}
+	if(nb_eclipses<2)
+	{
+		etype_duree=0;
+		etype_longueur=0;
+		etype_ratio=0;
+	}
+	else
+	{
+		etype_duree=Math.sqrt(etype_duree/(nb_eclipses-1));
+		etype_longueur=Math.sqrt(etype_longueur/(nb_eclipses-1));
+		etype_ratio=Math.sqrt(etype_ratio/(nb_eclipses-1));
+	}
+	
+	var stats_period={"Duree":{"mu":scale_stat_duree(moy_duree),"sigma":0.5*scale_stat_duree(etype_duree)},
+				"Ratio":{"mu":scale_stat_longueur(moy_longueur),"sigma":0.5*scale_stat_longueur(etype_longueur)},
+			    "Longueur":{"mu":scale_stat_ratio(etype_ratio),"sigma":0.5*scale_stat_ratio(etype_ratio)}};
+				
+	
+	update_box_plot(stats_period);	
+}
+
+
+
 });
