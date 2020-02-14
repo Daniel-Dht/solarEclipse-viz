@@ -371,7 +371,7 @@ function show_only_type_and_date(type,mini_year,maxi_year)
 									else{return "none";}
 								});
 	}
-
+	
 	svg_GE.selectAll('circle')
 
 		.style('visibility', function(c,i){
@@ -415,7 +415,7 @@ $(".date_slider").ionRangeSlider({
 								  show_treemap_data(min_year,max_year);}
     });
 
-
+	
 	
 	
 	
@@ -770,7 +770,8 @@ function GE_onemouseover(i1){
 			}						
 		})	
 }
-function GE_onemouseleave(mini_year,maxi_year){
+
+function GE_onemouseleave(){
 	//d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
 	svg_path.selectAll('circle').remove();
 	
@@ -790,14 +791,12 @@ function GE_onemouseleave(mini_year,maxi_year){
 		});
 }
 
-//init
-
 showContinents();
 showGEonMap();
 GE_interaction();
-switch_to("map");
+show_only_type_and_date(selected_type,min_year,max_year);
 
-show_only_type_and_date(selected_type,min_year,max_year);	
+switch_to("map");
 
 
 
