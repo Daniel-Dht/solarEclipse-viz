@@ -156,6 +156,17 @@ body
 	animation-duration: 0.5s;
 }
 
+.eclipse_liste_item:hover
+{
+	cursor:pointer;
+}
+
+.desc_vars:hover
+{
+	cursor:default;
+}
+
+
 .eclipse_liste_container
 {
 	width:100%;

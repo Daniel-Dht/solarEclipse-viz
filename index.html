@@ -2,8 +2,14 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <title>Eclipses solaires - visualisation</title>
+  <title>Solar Eclipse Viz</title>
   
+  <meta name="author" content="DOUHERET Daniel & GOBERT Grégoire">
+  <meta property="og:title" content="Solar Eclipse Viz">
+  <meta property="og:description" content="Solar Eclipse Viz - visualisation de données géographiques et temporelles d'éclipses solaires, de 1970 à 2070">
+  <meta property="og:image" content="https://daniel-dht.github.io/solarEclipse-viz/presentation.png">
+  
+  <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" integrity="sha384-v8BU367qNbs/aIZIxuivaU55N5GPF89WBerHoGA4QTcbUjYiLQtKdrfXnqAcXyTv" crossorigin="anonymous">
   <!--Plugin CSS file with desired skin-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ion-rangeslider/2.3.1/css/ion.rangeSlider.min.css"/>  
@@ -56,7 +62,7 @@
 		</div>
 		
 		<!-- Le titre des variables bien alignees -->
-		<div class="eclipse_liste_item">
+		<div class="eclipse_liste_item desc_vars">
 			<div class="eclipse_liste_item_date"><i>Date</i></div>
 			<div class="eclipse_liste_item_heure"><i>Heure</i></div>
 			<div class="eclipse_liste_item_type"><i>Type</i></div>
@@ -65,7 +71,7 @@
 				<span class="choosen_param">
 					<span>&nbsp;</span>
 					<i>Paramètre</i>
-					<span>&#9660;</span>
+					<span>&#9776;</span>
 				</span>
 				<div class="choose_param">
 					<div class="choose_param_ratio">Ratio</div>
