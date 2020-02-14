@@ -307,6 +307,20 @@ body
 	text-align:center;
 }
 
+.axes_title span
+{
+	display:flex;
+	flex-direction:row;
+	flex-wrap:no-wrap;
+	justify-content:center;
+	align-items:flex-end;
+}
+
+.axes_title span:last-child
+{
+	justify-content:flex-end;
+}
+
 .axes_title span span
 {
 	padding-left:7px;

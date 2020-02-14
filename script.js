@@ -135,9 +135,10 @@ function show_saros(e)
 	  
 	
 	//Parcourt des polylines
-	d3.selectAll("polyline")
+	d3.selectAll("g")
+	 .selectAll("path")
 	 .attr("stroke-width",function(d){if(d["Catalog Number"]===e["Catalog Number"]){return "3.0";}})
-	 .attr("stroke",function(d)
+	 .attr("stroke",function(d,i)
 				{
 					//Si meme saros
 					if(d["Saros Number"]===e["Saros Number"])
@@ -156,17 +157,20 @@ function show_saros(e)
 											.attr("class","saros_item")
 						 
 						//Remplissage de l'item
-						saros_item.append("span").text(formatDate(d['Calendar Date']));
-						saros_item.append("span").text(formatHeure(d['Eclipse Time']));
-						var eclipse_type;
-						if(d['Eclipse Type'].substring(0,1)=="P"){eclipse_type="&#9680;"}
-						if(d['Eclipse Type'].substring(0,1)=="A"){eclipse_type="&#10687;"}
-						if(d['Eclipse Type'].substring(0,1)=="T"){eclipse_type="&#x2B24;"}
-						if(d['Eclipse Type'].substring(0,1)=="H"){eclipse_type="&#9677;"}
-						saros_item.append("span").html(eclipse_type);
-						saros_item.append("span").text(formatDuree(d['Central Duration']).toString().substring(0,8));
-						saros_item.append("span").text(d['Eclipse Magnitude'].toString().substring(0,4));
-						saros_item.append("span").text(d['Path Width (km)'].toString());
+						if(i==0)
+						{
+							saros_item.append("span").text(formatDate(d['Calendar Date']));
+							saros_item.append("span").text(formatHeure(d['Eclipse Time']));
+							var eclipse_type;
+							if(d['Eclipse Type'].substring(0,1)=="P"){eclipse_type="&#9680;"}
+							if(d['Eclipse Type'].substring(0,1)=="A"){eclipse_type="&#10687;"}
+							if(d['Eclipse Type'].substring(0,1)=="T"){eclipse_type="&#x2B24;"}
+							if(d['Eclipse Type'].substring(0,1)=="H"){eclipse_type="&#9677;"}
+							saros_item.append("span").html(eclipse_type);
+							saros_item.append("span").text(formatDuree(d['Central Duration']).toString().substring(0,8));
+							saros_item.append("span").text(d['Eclipse Magnitude'].toString().substring(0,4));
+							saros_item.append("span").text(d['Path Width (km)'].toString());
+						}
 						
 						
 						return color_selected;
@@ -199,7 +203,7 @@ function hide_saros()
 	d3.selectAll(".svg_saros circle").remove();
 	
 	//On remet les polyline par defaut 
-	d3.selectAll("polyline").attr("stroke","rgba(200,200,200,0.1)")
+	d3.selectAll("g").selectAll("path").attr("stroke","rgba(200,200,200,0.1)")
 }
 
 //AFFICHAGE LISTE DES ECLIPSES
@@ -410,25 +414,64 @@ show_only_type_and_date(selected_type,min_year,max_year);
 //Les echelles
 var date_scale=d3.scaleTime()
      				.domain(d3.extent(data, function(d) {return d['Calendar Date'];}))
-					.range([0.02*svg_height,0.92*svg_height]);
+					.range([0.08*svg_height,0.92*svg_height]);
 					      
     
 var duration_scale=d3.scaleTime()
 				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
-				.range([0.02*svg_height,0.92*svg_height]); 
+				.range([0.08*svg_height,0.92*svg_height]); 
 				
 				
 var magnitude_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
-				.range([0.02*svg_height,0.92*svg_height]); 
+				.range([0.08*svg_height,0.92*svg_height]); 
 				
 				
 var path_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
-				.range([0.02,0.92*svg_height]); 
+				.range([0.08*svg_height,0.92*svg_height]); 
 				
 
 //Affichage des traits				
+var saros_svg_g=svg_saros.selectAll("g")
+	 .data(data)
+	 .enter()
+	 .append("g");
+	
+saros_svg_g.append("path")	
+	 .attr("fill","none")
+	 .attr("stroke","rgba(200,200,200,0.1)")
+	 .attr("stroke-width","2.0")
+	 .on("mouseover",function(e){show_saros(e);})
+	 .on("mouseout",function(){hide_saros()})
+	 .attr("d",function(d){return "M "+(0.08*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
+								 +"C "+(0.22*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
+								      +(0.22*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
+									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()}
+									  );
+saros_svg_g.append("path")	
+	 .attr("fill","none")
+	 .attr("stroke","rgba(200,200,200,0.1)")
+	 .attr("stroke-width","2.0")
+	 .on("mouseover",function(e){show_saros(e);})
+	 .on("mouseout",function(){hide_saros()})
+	 .attr("d",function(d){return "M "+(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
+								 +"C "+(0.50*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
+								      +(0.50*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
+									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()}
+									  );
+saros_svg_g.append("path")	
+	 .attr("fill","none")
+	 .attr("stroke","rgba(200,200,200,0.1)")
+	 .attr("stroke-width","2.0")
+	 .on("mouseover",function(e){show_saros(e);})
+	 .on("mouseout",function(){hide_saros()})
+	 .attr("d",function(d){return "M "+(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
+								 +"C "+(0.78*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
+								      +(0.78*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()+" "
+									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()}
+									  );
+/*	 		
 svg_saros.selectAll("polyline")
 	 .data(data)
 	 .enter()
@@ -442,7 +485,7 @@ svg_saros.selectAll("polyline")
 									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
 									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
 									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()});
-	 
+*/	 
 	 
 	 
 //Affichage des axes
@@ -451,8 +494,8 @@ svg_saros.append("line")
    .attr("x2",(0.08*svg_width).toString())
    .attr("y1",(0.02*svg_height).toString())
    .attr("y2",(0.98*svg_height).toString())
-   .attr("stroke","black")
-   .attr("stroke-width","3.4");
+   .attr("stroke","rgb(0, 31, 63)")
+   .attr("stroke-width","2.4");
 svg_saros.append("polygon")
    .attr("points",(0.07*svg_width).toString()
 					+","
@@ -465,17 +508,21 @@ svg_saros.append("polygon")
 					+(0.09*svg_width).toString()
 					+","
 					+(0.95*svg_height).toString()
+					+" "
+					+(0.08*svg_width).toString()
+					+","
+					+(0.975*svg_height).toString()
 					+" ")
    .attr("stroke","none")
-   .attr("fill","black");
+   .attr("fill","rgb(0, 31, 63)");
 
 svg_saros.append("line")
    .attr("x1",(0.36*svg_width).toString())
    .attr("x2",(0.36*svg_width).toString())
    .attr("y1",(0.02*svg_height).toString())
    .attr("y2",(0.98*svg_height).toString())
-   .attr("stroke","black")
-   .attr("stroke-width","3.4"); 
+   .attr("stroke","rgb(0, 31, 63)")
+   .attr("stroke-width","2.4"); 
 svg_saros.append("polygon")
    .attr("points",(0.35*svg_width).toString()
 					+","
@@ -488,17 +535,21 @@ svg_saros.append("polygon")
 					+(0.37*svg_width).toString()
 					+","
 					+(0.95*svg_height).toString()
+					+" "
+					+(0.36*svg_width).toString()
+					+","
+					+(0.975*svg_height).toString()
 					+" ")
    .attr("stroke","none")
-   .attr("fill","black");
+   .attr("fill","rgb(0, 31, 63)");
    
 svg_saros.append("line")
    .attr("x1",(0.64*svg_width).toString())
    .attr("x2",(0.64*svg_width).toString())
    .attr("y1",(0.02*svg_height).toString())
    .attr("y2",(0.98*svg_height).toString())
-   .attr("stroke","black")
-   .attr("stroke-width","3.4");
+   .attr("stroke","rgb(0, 31, 63)")
+   .attr("stroke-width","2.4");
 svg_saros.append("polygon")
    .attr("points",(0.63*svg_width).toString()
 					+","
@@ -511,17 +562,21 @@ svg_saros.append("polygon")
 					+(0.65*svg_width).toString()
 					+","
 					+(0.95*svg_height).toString()
+					+" "
+					+(0.64*svg_width).toString()
+					+","
+					+(0.975*svg_height).toString()
 					+" ")
    .attr("stroke","none")
-   .attr("fill","black");
+   .attr("fill","rgb(0, 31, 63)");
    
 svg_saros.append("line")
    .attr("x1",(0.92*svg_width).toString())
    .attr("x2",(0.92*svg_width).toString())
-   .attr("y1",(0.00*svg_height).toString())
+   .attr("y1",(0.02*svg_height).toString())
    .attr("y2",(0.98*svg_height).toString())
-   .attr("stroke","black")
-   .attr("stroke-width","3.4");
+   .attr("stroke","rgb(0, 31, 63)")
+   .attr("stroke-width","2.4");
 svg_saros.append("polygon")
    .attr("points",(0.91*svg_width).toString()
 					+","
@@ -534,9 +589,13 @@ svg_saros.append("polygon")
 					+(0.93*svg_width).toString()
 					+","
 					+(0.95*svg_height).toString()
+					+" "
+					+(0.92*svg_width).toString()
+					+","
+					+(0.975*svg_height).toString()
 					+" ")
    .attr("stroke","none")
-   .attr("fill","black");
+   .attr("fill","rgb(0, 31, 63)");
    
 //***************************************************************************** */
 //****************************   MAP        *********************************** */
