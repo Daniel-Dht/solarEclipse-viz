@@ -111,7 +111,15 @@ var formatDuree = d3.timeFormat("%M'%S''");
 
 function show_saros(e)
 {
-	//Titre : Soros et son numéro
+	//Surligne dans la liste
+	items.style("background-color",function(d)
+									{
+										if(d['Catalog Number']==e['Catalog Number']){return "rgb(230,230,230)";}
+										else{return "none";}
+									})
+	
+	
+	//Titre : Saros et son numéro
 	d3.select(".infos_supp_titre_saros")
 	  .text("Saros "+ e['Saros Number'].toString())
 	  .style("font-size","0.9em");
@@ -186,6 +194,9 @@ function show_saros(e)
 
 function hide_saros()
 {
+	//Enleve le surlignage dans la liste
+	items.style("background-color","rgba(0,0,0,0)");
+	
 	//On repasse au texte par defaut
 	d3.select(".infos_supp_titre_saros")
 	  .text("Saros")
@@ -769,6 +780,21 @@ function GE_onemouseover(i1){
 				return "hidden";
 			}						
 		})	
+	
+	//Scroll vers item dans la liste
+	/*
+	var catalog_number=data[i1]['Catalog Number'];
+	items.style("background-color",function(d)
+									{
+										if(d['Catalog Number']==catalog_number)
+										{
+											console.log(d.pageX);
+											
+											return "rgb(230,230,230)";
+										}
+										else{return "none";}
+									})
+	*/
 }
 
 function GE_onemouseleave(){

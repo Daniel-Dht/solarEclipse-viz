@@ -162,6 +162,8 @@ body
 	padding-top:10px;
 	padding-bottom:10px;
 	overflow: auto;
+	
+	scroll-behavior:smooth;
 }
 
 .eclipse_liste_container::-webkit-scrollbar
