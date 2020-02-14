@@ -371,6 +371,18 @@ function show_only_type_and_date(type,mini_year,maxi_year)
 									else{return "none";}
 								});
 	}
+
+	svg_GE.selectAll('circle')
+
+		.style('visibility', function(c,i){
+			d = data[i];
+			if((d['Eclipse Type'].substring(0,1)==type || type=="ALL") && d['Calendar Date']>date_min && d['Calendar Date']<date_max){
+				return "visible";
+			}
+			else{
+				return "hidden";
+			}
+		})
 } 
 
 
@@ -403,8 +415,7 @@ $(".date_slider").ionRangeSlider({
 								  show_treemap_data(min_year,max_year);}
     });
 
-//init
-show_only_type_and_date(selected_type,min_year,max_year);	
+
 	
 	
 	
@@ -762,15 +773,31 @@ function GE_onemouseover(i1){
 function GE_onemouseleave(mini_year,maxi_year){
 	//d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
 	svg_path.selectAll('circle').remove();
-	svg_map.selectAll('circle').style('visibility',"visible");
+	
+	var convertToDate=d3.timeParse("%d/%m/%Y");
+	var date_min=convertToDate("01/01/" +  min_year.toString());
+	var date_max=convertToDate("01/01/" + (max_year+1).toString());
+
+	svg_GE.selectAll('circle').style('visibility', function(c,i){
+			var d = data[i];
+			var type_selected = d['Eclipse Type'].substring(0,1) == selected_type || selected_type=="ALL"
+			var date_in_selection = d['Calendar Date']>date_min && d['Calendar Date']<date_max
+			if(type_selected && date_in_selection){
+				return "visible";
+			} else{
+				return "hidden";
+			}
+		});
 }
+
+//init
 
 showContinents();
 showGEonMap();
 GE_interaction();
-
 switch_to("map");
 
+show_only_type_and_date(selected_type,min_year,max_year);	
 
 
 
