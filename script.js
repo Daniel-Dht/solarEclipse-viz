@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    SELECTION ET TAILLE DES SVG
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 var svg_saros=d3.select(".svg_saros");
 var svg_map=d3.select(".svg_map");
 var eclipse_liste_container=d3.select(".eclipse_liste_container");
@@ -11,6 +17,12 @@ svg_map.attr("viewBox","0 0 "+svg_width.toString()+" "+svg_height.toString());
 
 
 
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    LECTURE JEU DE DONNEES
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 //Lecture du jeu de données
 function parseLatitude(latitude){
 	var val = latitude.slice(0,-1);
@@ -23,7 +35,6 @@ function parseLongitude(longitude){
 	return  val; 
 }
 
-//Lecture du jeu de données
 var parseDate = d3.timeParse("%_Y %B %e");
 var parseTime = d3.timeParse("%H:%M:%S");
 var parseDuration = d3.timeParse("%Mm%Ss");
@@ -62,6 +73,11 @@ var data = d3.csv('solar_1950_2050.csv', function(error, data){
   });
 
 
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    FONCTIONS AFFICHAGE DU SAROS
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 var formatDate = d3.timeFormat("%d/%m/%Y");
 var formatHeure = d3.timeFormat("%H:%M");
@@ -97,7 +113,7 @@ function show_saros(e)
 	saros_item.append("span").html("<i>Type</i>");
 	saros_item.append("span").html("<i>Durée</i>");
 	saros_item.append("span").html("<i>Ratio</i>");
-	saros_item.append("span").html("<i>Longueur (km)</i>");
+	saros_item.append("span").html("<i>Largeur (km)</i>");
 	  
 	
 	//Parcourt des polylines
@@ -153,7 +169,7 @@ function show_saros(e)
 function hide_saros()
 {
 	//Enleve le surlignage dans la liste
-	items.style("background-color","rgba(0,0,0,0)");
+	items.style("background-color","rgba(0,0,0,0)")
 	
 	//On repasse au texte par defaut
 	d3.select(".infos_supp_titre_saros")
@@ -176,15 +192,117 @@ function hide_saros()
 	d3.selectAll("g").selectAll("path").attr("stroke","rgba(200,200,200,0.1)")
 }
 
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    AFFICHAGE LISTE ECLIPSES VOLET GAUCHE
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 //AFFICHAGE LISTE DES ECLIPSES
 //Creation des items
+
+var locked_saros_catalog_number=0;
+
+function lock_elt(d,from_list)
+{
+	// from_list : booleen qui dit si le clic a été fait sur un elt de la liste (true) ou alors depuis un GE ou un path du saros(false)
+	//// GESTION DU LOCK/UNLOCKS
+	//cas ou rien n'est locked : on lock l'element
+	if(locked_saros_catalog_number==0)
+	{
+		locked_saros_catalog_number=d['Catalog Number'];
+		//Bordure du lock
+		items.transition().duration(250).style("border-right",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "3px solid rgb(0,31,63)";}
+									else {return "0px solid rgba(0,0,0,0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(-1.7%)";}
+									else {return "scale(1.0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(0px)";}
+									else {return "scale(1.0)";}
+								});
+								
+		//Affichage du bon saros
+		hide_saros();
+		show_saros(d);
+		//Affichage de la trajectoire sur la map
+		GE_onemouseleave();
+		GE_onemouseover(d['Catalog Number']-9442)
+	}
+	//cas où on change d'element à lock
+	else if(locked_saros_catalog_number!=d['Catalog Number'])
+	{
+		locked_saros_catalog_number=d['Catalog Number'];
+		//Bordure du lock
+		items.transition().duration(250).style("border-right",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "3px solid rgb(0,31,63)";}
+									else {return "0px solid rgba(0,0,0,0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(-1.7%)";}
+									else {return "scale(1.0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(0px)";}
+									else {return "scale(1.0)";}
+								});
+								
+		//Affichage du bon saros
+		hide_saros();
+		show_saros(d);
+		//Affichage de la trajectoire sur la map
+		GE_onemouseleave();
+		GE_onemouseover(d['Catalog Number']-9442)
+	}
+	//Sinon : on veut unlock l'elementel
+	else
+	{
+		locked_saros_catalog_number=0;
+		//Bordure du lock
+		items.transition().duration(250).style("border-right",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "3px solid rgb(0,31,63)";}
+									else {return "0px solid rgba(0,0,0,0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(-1.7%)";}
+									else {return "scale(1.0)";}
+								})
+			 .transition().duration(250).style("transform",function(e)
+								{
+									if(e['Catalog Number']==locked_saros_catalog_number){return "translate(0px)";}
+									else {return "scale(1.0)";}
+								});
+								
+		//Affichage du bon saros
+		hide_saros();
+		show_saros(d);
+		//Affichage de la trajectoire sur la map
+		GE_onemouseleave();
+		GE_onemouseover(d['Catalog Number']-9442)
+		//Gestion de la couleur de fond de l'item
+		if(from_list==false){items.style("background-color","rgb(250,250,250)")}
+	}
+}
 
 var items = eclipse_liste_container.selectAll("div").data(data)
 						   .enter()
 						   .append("div")
 						   .attr("class","eclipse_liste_item")
-						   .on("mouseover",function(e){show_saros(e);GE_onemouseover(e['Catalog Number']-9442);})
-						   .on("mouseout",function(){hide_saros();GE_onemouseleave();})
+						   .on("mouseenter",function(e){if(locked_saros_catalog_number!=0){return;} show_saros(e);GE_onemouseover(e['Catalog Number']-9442);})
+						   .on("mouseleave",function(){if(locked_saros_catalog_number!=0){return;} hide_saros();GE_onemouseleave();})
+						   .on("click",function(d){lock_elt(d,true)})
 
 
 //Pour le formattage
@@ -226,6 +344,13 @@ var eclipse_liste_item_param_barre=eclipse_liste_item_param.append("div")
 															
 var eclipse_liste_item_param_span=eclipse_liste_item_param.append("span")
 								   //.html(function(d){return '<div class="barre" style="width:'+"0"+'%">.&nbsp;</div><span>'+d['Eclipse Magnitude'].toString().substring(0,4)+'</span>'})
+								   
+								   
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CHOIX DU PARAMETRE A AFFICHER
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 	   
 //Gestion du menu deroulant pour le choix du paramètre
 d3.select(".choose_param_ratio").on("click",function()
@@ -244,7 +369,7 @@ d3.select(".choose_param_ratio").on("click",function()
 											
 d3.select(".choose_param_longueur").on("click",function()
 											{
-												d3.select(".choosen_param i").text("Longueur (km)");
+												d3.select(".choosen_param i").text("Largeur (km)");
 												
 												var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Path Width (km)']})).range([0,70]);
 												
@@ -283,7 +408,23 @@ d3.select(".choose_param_gamma").on("click",function()
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Gamma']).toString().substring(0,4)+"%"});
 												
 											});
+											
+//Par defaut : paramètre largeur:
+d3.select(".choosen_param i").text("Largeur (km)")
+var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Path Width (km)']})).range([0,70]);
+eclipse_liste_item_param_barre.style("visibility","visible");
+eclipse_liste_item_param_span.text(function(d){return d['Path Width (km)'].toString()});
+eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Path Width (km)']).toString().substring(0,4)+"%"});
 
+											
+											
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    GESTION DE LA PERIODE SELECTIONNEE
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 //Affichage d'une partie des données seulement  
 function show_only_date(mini_year,maxi_year)
@@ -389,7 +530,12 @@ $(".date_slider").ionRangeSlider({
 	
 	
 	
-	
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CREATION DU GRAPHE SAROS
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 // AFFICHAGE DU GRAPHE DES SAROS
 
 //Les echelles
@@ -423,8 +569,8 @@ saros_svg_g.append("path")
 	 .attr("fill","none")
 	 .attr("stroke","rgba(200,200,200,0.1)")
 	 .attr("stroke-width","2.0")
-	 .on("mouseover",function(e){show_saros(e);})
-	 .on("mouseout",function(){hide_saros()})
+	 .on("mouseover",function(e){if(locked_saros_catalog_number!=0){return;} show_saros(e);})
+	 .on("mouseout",function(){if(locked_saros_catalog_number!=0){return;} hide_saros()})
 	 .attr("d",function(d){return "M "+(0.08*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
 								 +"C "+(0.22*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
 								      +(0.22*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
@@ -434,8 +580,8 @@ saros_svg_g.append("path")
 	 .attr("fill","none")
 	 .attr("stroke","rgba(200,200,200,0.1)")
 	 .attr("stroke-width","2.0")
-	 .on("mouseover",function(e){show_saros(e);})
-	 .on("mouseout",function(){hide_saros()})
+	 .on("mouseover",function(e){if(locked_saros_catalog_number!=0){return;} show_saros(e);})
+	 .on("mouseout",function(){if(locked_saros_catalog_number!=0){return;} hide_saros()})
 	 .attr("d",function(d){return "M "+(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
 								 +"C "+(0.50*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
 								      +(0.50*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
@@ -445,29 +591,14 @@ saros_svg_g.append("path")
 	 .attr("fill","none")
 	 .attr("stroke","rgba(200,200,200,0.1)")
 	 .attr("stroke-width","2.0")
-	 .on("mouseover",function(e){show_saros(e);})
-	 .on("mouseout",function(){hide_saros()})
+	 .on("mouseover",function(e){if(locked_saros_catalog_number!=0){return;} show_saros(e);})
+	 .on("mouseout",function(){if(locked_saros_catalog_number!=0){return;} hide_saros()})
 	 .attr("d",function(d){return "M "+(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
 								 +"C "+(0.78*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
 								      +(0.78*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()+" "
 									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()}
 									  );
-/*	 		
-svg_saros.selectAll("polyline")
-	 .data(data)
-	 .enter()
-	 .append("polyline")
-	 .attr("fill","none")
-	 .attr("stroke","rgba(200,200,200,0.1)")
-	 .attr("stroke-width","2.0")
-	 .on("mouseover",function(e){show_saros(e);})
-	 .on("mouseout",function(){hide_saros()})
-	 .attr("points",function(d){return (0.08*svg_width).toString()+","+date_scale(d['Calendar Date']).toString()+" "
-									  +(0.36*svg_width).toString()+","+duration_scale(d['Central Duration']).toString()+" "
-									  +(0.64*svg_width).toString()+","+magnitude_scale(d['Eclipse Magnitude']).toString()+" "
-									  +(0.92*svg_width).toString()+","+path_scale(d['Path Width (km)']).toString()});
-*/	 
-	 
+
 	 
 //Affichage des axes
 svg_saros.append("line")
@@ -578,9 +709,14 @@ svg_saros.append("polygon")
    .attr("stroke","none")
    .attr("fill","rgb(0, 31, 63)");
    
-//***************************************************************************** */
-//****************************   MAP        *********************************** */
-//***************************************************************************** */
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CREATION DE LA MAP
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 
 // layers:
 var svg_continent = svg_map.append('g');
@@ -601,124 +737,175 @@ var formatDate_Ymd = d3.timeFormat("%Y-%m-%d");
 
 
 // affichage des GE de chaque eclipses sur la map
-{ 
-	function showContinents(){
 
-		var path = d3.geoPath().projection(projection);
+function showContinents(){
 
-		svg_continent.append("defs").append("path") // contour du monde
-			.datum({type: "Sphere"})
-			.attr("id", "sphere")
-			.attr("d", path)
-			//.attr("color", "none");  
+	var path = d3.geoPath().projection(projection);
 
-		svg_continent.append("use") // contour du monde
-			.attr("class", "stroke")
-			.attr("xlink:href", "#sphere")
-			.style("fill", "rgb(245,245,245)");  
+	svg_continent.append("defs").append("path") // contour du monde
+		.datum({type: "Sphere"})
+		.attr("id", "sphere")
+		.attr("d", path)
+		//.attr("color", "none");  
 
-		svg_continent.append("path") // tracés des longitudes/lattitudes
-			.datum(graticule)
-			.attr("class", "graticule")
-			.attr("d", path)
-			.style("fill", "none");  
+	svg_continent.append("use") // contour du monde
+		.attr("class", "stroke")
+		.attr("xlink:href", "#sphere")
+		.style("fill", "rgb(245,245,245)");  
 
-		// Affichage des continents		
-		var dataContinentsPath = "https://piwodlaiwo.github.io/topojson//world-continents.json";
-		d3.json(dataContinentsPath, function(error, topology) {
-			var continents = topojson.feature(topology, topology.objects.continent).features;
+	svg_continent.append("path") // tracés des longitudes/lattitudes
+		.datum(graticule)
+		.attr("class", "graticule")
+		.attr("d", path)
+		.style("fill", "none");  
 
-			svg_continent.selectAll(".continent")
-			.data(continents)
-			.enter()
-			.append("path")
-			.attr("d", path)
-			.attr("title", function(d,i) { 
-				return d.properties.continent;
-			})
-			.style("fill", "rgb(0, 31, 63)")   //function(d, i) { return color(i); });
-			// .on("mouseover", function(d) {        	
-			// 	d3.select(this)
-			// 		.transition()
-			// 		.duration(200)
-			// 		.style("fill", "red");     		
-			// })
-			// .on("mouseout", function(d) {        	
-			// 	d3.select(this)
-			// 		.transition()
-			// 		.duration(200)
-			// 		.style("fill", "rgb(0, 31, 63)");     		
-			// });	
+	// Affichage des continents		
+	var dataContinentsPath = "https://piwodlaiwo.github.io/topojson//world-continents.json";
+	d3.json(dataContinentsPath, function(error, topology) {
+		var continents = topojson.feature(topology, topology.objects.continent).features;
+
+		svg_continent.selectAll(".continent")
+		.data(continents)
+		.enter()
+		.append("path")
+		.attr("d", path)
+		.attr("title", function(d,i) { 
+			return d.properties.continent;
 		})
-	}
-	function showOnePathOnMap(id){
-		
-		d3.json("https://raw.githubusercontent.com/Daniel-Dht/solarEclipse-viz/master/all_paths.json", function(eclipsePath){	
-					
-			showPath(id, eclipsePath);		
-					
-		});
-		//return success; // don't work due to async behavior
-	}
-	function showAllPathOnMap(){
-		d3.json("all_paths.json", function(error, eclipsePath){		
-			for(var i=0; i< data.length; i++)
-			{
-				showPath(i, eclipsePath);
-			}
-		});
-	};
-	
+		.style("fill", "rgb(0, 31, 63)")   //function(d, i) { return color(i); });
+		// .on("mouseover", function(d) {        	
+		// 	d3.select(this)
+		// 		.transition()
+		// 		.duration(200)
+		// 		.style("fill", "red");     		
+		// })
+		// .on("mouseout", function(d) {        	
+		// 	d3.select(this)
+		// 		.transition()
+		// 		.duration(200)
+		// 		.style("fill", "rgb(0, 31, 63)");     		
+		// });	
+	})
+}
 
-	function showPath(id, eclipsePath) {
-		var d = data[id];
-		var date = formatDate_Ymd(d['Calendar Date']);
-	
-		path = eclipsePath.cartographicDegrees[date];
 
-		if(path == undefined) {
-			return false;
+function showPath(id, eclipsePath) {
+	var d = data[id];
+	var date = formatDate_Ymd(d['Calendar Date']);
+
+	path = eclipsePath.cartographicDegrees[date];
+
+	if(path == undefined) {
+		//On cache tout
+		for(var i=0;i<svg_path.selectAll("circle").size();i++)
+		{
+			svg_path.select("circle:nth-child("+i.toString()+")")
+					.attr("fill","rgba(0,0,0,0)");
 		}
 		
-		for(var i=0; i< path.length; i+=2){        
-			var point = [path[i], path[i+1]]
-			var proj = projection(point)
-			svg_path.append("circle")
-				.attr("cx",proj[0]) 
-				.attr("cy",proj[1])
-				.attr("r",1)
-				.style("fill","green")
-		}  
-		return true;
-	};
-	
-	
-
-
-	function showGEonMap(){
-		data.forEach(function(d,i)
-		{       
-			var point = [d['Longitude'], d['Latitude']]
-			var proj = projection(point)
-			//console.log(point);
-			svg_GE.append('circle')
-				.attr("cx",proj[0]) 
-				.attr("cy",proj[1])
-				.attr("r", 0.05*path_scale(d['Path Width (km)']))
-				.style("fill","green")
-				.style('opacity','0.5')
-		}); 
-	};
-	
-	function GE_interaction(){
-		svg_GE.selectAll('circle')
-			.on("mouseenter", function(d1,i1) {			
-				GE_onemouseover(i1);
-			})
-			.on("mouseleave", function() {      
-				GE_onemouseleave();
-			});
+		return false;
 	}
+	
+	var points=[]
+	for(var i=0; i< path.length; i+=2){        
+		var point = [path[i], path[i+1]];
+		var proj = projection(point);
+		points.push(proj);
+	}
+	
+	var nb_circles=svg_path.selectAll("circle").size();
+	var nb_points=points.length;
+	
+	if(nb_points>=nb_circles)
+	{
+		//On bouge les cercles deja présents
+		for(var i=0;i<nb_circles;i++)
+		{
+			svg_path.select("circle:nth-child("+i.toString()+")")
+					.attr("cx",points[i][0]) 
+					.attr("cy",points[i][1])
+					.attr("r",1)
+					.attr("fill","green");
+		}
+		
+		//On crée les cercles manquants
+		for(var i=nb_circles; i< nb_points; i+=1)
+		{        
+			svg_path.append("circle")
+				.attr("cx",points[i][0]) 
+				.attr("cy",points[i][1])
+				.attr("r",1)
+				.attr("fill","green");
+		}
+	}
+	else
+	{
+		//On bouge les cercles deja présents
+		for(var i=0;i<nb_points;i++)
+		{
+			svg_path.select("circle:nth-child("+i.toString()+")")
+					.attr("cx",points[i][0]) 
+					.attr("cy",points[i][1])
+					.attr("r",1)
+					.attr("fill","green");
+		}
+		
+		for(var i=nb_points;i<nb_circles;i++)
+		{
+			svg_path.select("circle:nth-child("+i.toString()+")")
+					.attr("fill","rgba(0,0,0,0)");
+		}
+				
+	}
+	return true;
+};
+
+function showOnePathOnMap(id){
+	
+	d3.json("https://raw.githubusercontent.com/Daniel-Dht/solarEclipse-viz/master/all_paths.json", function(eclipsePath){	
+				
+		showPath(id, eclipsePath);		
+				
+	});
+	//return success; // don't work due to async behavior
+}
+function showAllPathOnMap(){
+	d3.json("all_paths.json", function(error, eclipsePath){		
+		for(var i=0; i< data.length; i++)
+		{
+			showPath(i, eclipsePath);
+		}
+	});
+};
+
+
+
+function showGEonMap(){
+	data.forEach(function(d,i)
+	{       
+		var point = [d['Longitude'], d['Latitude']]
+		var proj = projection(point)
+		//console.log(point);
+		svg_GE.append('circle')
+			.attr("cx",proj[0]) 
+			.attr("cy",proj[1])
+			.attr("r", 0.05*path_scale(d['Path Width (km)']))
+			.style("fill","green")
+			.style('opacity','0.5')
+	}); 
+};
+
+function GE_interaction(){
+	svg_GE.selectAll('circle')
+		.on("mouseenter", function(d1,i1) {	
+			if(locked_saros_catalog_number!=0){return;}		
+			GE_onemouseover(i1);
+		})
+		.on("mouseleave", function() { 
+			if(locked_saros_catalog_number!=0){return;}
+			GE_onemouseleave();
+		})
+		.on("click",function(d,i){scrollTo(i+9442)});
 }
 
 function GE_onemouseover(i1){
@@ -730,47 +917,41 @@ function GE_onemouseover(i1){
 	// }
 	
 
-	svg_map.selectAll('circle')
-		.style('visibility', function(d2,i2){						
+	svg_GE.selectAll('circle')
+		.style('fill', function(d2,i2){						
 			if(i1==i2){
-				return "visible";                
+				return "green";                
 			} else { 
-				return "hidden";
+				return "rgba(0,0,0,0)";
 			}						
 		})	
-	
-	//Scroll vers item dans la liste
-	/*
-	var catalog_number=data[i1]['Catalog Number'];
-	items.style("background-color",function(d)
-									{
-										if(d['Catalog Number']==catalog_number)
-										{
-											console.log(d.pageX);
-											
-											return "rgb(230,230,230)";
-										}
-										else{return "none";}
-									})
-	*/
 }
+
 
 function GE_onemouseleave(){
 	//d3.select(".infos_supp_multiple_columns_map").html('Infos sur la map')
-	svg_path.selectAll('circle').remove();
+	//svg_path.selectAll("circle").remove();
+	//svg_path.html("");
+	
+	//On cache les points
+	for(var i=0;i<svg_path.selectAll("circle").size();i++)
+		{
+			svg_path.select("circle:nth-child("+i.toString()+")")
+					.attr("fill","rgba(0,0,0,0)");
+		}
 	
 	var convertToDate=d3.timeParse("%d/%m/%Y");
 	var date_min=convertToDate("01/01/" +  min_year.toString());
 	var date_max=convertToDate("01/01/" + (max_year+1).toString());
 
-	svg_GE.selectAll('circle').style('visibility', function(c,i){
+	svg_GE.selectAll('circle').style('fill', function(c,i){
 			var d = data[i];
 			var type_selected = d['Eclipse Type'].substring(0,1) == selected_type || selected_type=="ALL"
 			var date_in_selection = d['Calendar Date']>date_min && d['Calendar Date']<date_max
 			if(type_selected && date_in_selection){
-				return "visible";
+				return "green";
 			} else{
-				return "hidden";
+				return "rgba(0,0,0,0)";
 			}
 		});
 }
@@ -781,11 +962,13 @@ GE_interaction();
 show_only_type_and_date(selected_type,min_year,max_year);
 
 
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CREATION DE LA TREEMAP
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 
-///////////
-//Treeemap
-///////////
 treemap_svg=d3.select(".treemap_svg");
 
 var treemap_svg_size=0.87*(document.getElementsByClassName("infos_supp_mat_left")[0].offsetHeight);
@@ -882,10 +1065,11 @@ show_treemap_data(1970,2070);
 
 
 
-
-/////////////////
-//Periode data
-////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CREATION PETITES STATS PERIODE
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
 function show_period_data(mini_year,maxi_year)
 {
@@ -918,9 +1102,12 @@ show_period_data(1970,2070);
 
 
 
-/////////////////
-//Box plot
-/////////////////
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    CREATION DIAGRAMME MOUSTACHE
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
 box_svg=d3.select(".box_svg");
 
 var box_svg_size=0.87*(document.getElementsByClassName("infos_supp_mat_left")[0].offsetHeight);
@@ -1141,13 +1328,12 @@ show_box_data(1970,2070);
 
 
 
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    GESTION SWITCH : MAP <-> SAROS
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 
-
-
-
-
-
-//Switch
 var svg_container_map=d3.select(".svg_container_map");
 var infos_supp_map=d3.select(".infos_supp_map");
 var svg_container_saros=d3.select(".svg_container_saros");
@@ -1170,7 +1356,7 @@ function switch_to(zone)
 		map_button.style("color","rgb(200,200,200)");
 		switch_button.style("justify-content","flex-end");
 		
-		show_only_type_and_date("ALL",1970,2070);
+		//show_only_type_and_date("ALL",1970,2070);
 	}
 	else 
 	{
@@ -1195,9 +1381,33 @@ var switch_button=d3.select(".switch").on("click",function()
 													else{switch_to("saros");}
 												});
 //infos_supp_saros.style("display","none");
-
+// Par défaut : map
 switch_to("map");
 
+
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+//    GESTION SCROLL DANS LISTE ITEM
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+function scrollTo(catal_number)
+{
+	//La div a scroller
+	var ecl_list=document.getElementsByClassName("eclipse_liste_container")[0];
+	//Retrouver quel est lea place de la div
+	var ind=0;
+	items.attr("id",function(d,i)
+					{
+						if(d['Catalog Number']==catal_number) { ind=i; lock_elt(d,false); }
+						return "";
+					});
+	var ecl_item=document.getElementsByClassName("eclipse_liste_item")[ind+1];
+	//Puis on scroll
+	ecl_list.scrollTop=(ecl_item.offsetTop-ecl_list.offsetTop-100);
+}
 
 
 
