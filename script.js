@@ -1,5 +1,96 @@
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
+//    GESTION DE L'AFFICHAGE DE L'AIDE
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
+
+//Partie switch
+var help_menu_data_button = document.getElementsByClassName("help_menu_data_button")[0];
+var help_menu_viz_button = document.getElementsByClassName("help_menu_viz_button")[0];
+var help_content_data = document.getElementsByClassName("help_content_data")[0];
+var help_content_viz = document.getElementsByClassName("help_content_viz")[0];
+
+function help_switch(type)
+{
+	//Si on a choisi les data
+	if(type=="DATA")
+	{
+		help_content_viz.style.display="none";
+		help_content_data.style.display="block";
+		
+		help_menu_viz_button.style.borderBottom="2px solid rgba(0,0,0,0)";
+		help_menu_data_button.style.borderBottom="2px solid white";
+		
+		show_slide(0);
+	}
+	else if(type=="VIZ")
+	{
+		help_content_data.style.display="none";
+		help_content_viz.style.display="flex";
+		
+		help_menu_data_button.style.borderBottom="2px solid rgba(0,0,0,0)";
+		help_menu_viz_button.style.borderBottom="2px solid white";
+		
+		show_slide(0);
+	}
+}
+help_switch("DATA");
+help_menu_data_button.addEventListener("click", function(){help_switch("DATA");}, false);
+help_menu_viz_button.addEventListener("click", function(){help_switch("VIZ");}, false);
+
+
+//Partie viz
+var nb_viz_slides = document.getElementsByClassName("viz_slide").length;
+
+function show_slide(i)
+{
+	for(var j =0;j<nb_viz_slides;j++)
+	{
+		if(j==i)
+		{
+			document.getElementsByClassName("viz_slide")[j].style.display="flex";
+		}
+		else
+		{
+			document.getElementsByClassName("viz_slide")[j].style.display="none";
+		}
+	}
+}
+
+show_slide(0);
+
+document.getElementsByClassName("fa-angle-double-right")[0].addEventListener("click",function(){show_slide(1);},false);
+document.getElementsByClassName("fa-angle-double-right")[1].addEventListener("click",function(){show_slide(2);},false);
+document.getElementsByClassName("fa-angle-double-right")[2].addEventListener("click",function(){show_slide(3);},false);
+document.getElementsByClassName("fa-angle-double-right")[3].addEventListener("click",function(){show_slide(4);},false);
+document.getElementsByClassName("fa-angle-double-right")[4].addEventListener("click",function(){show_slide(5);},false);
+document.getElementsByClassName("fa-angle-double-right")[5].addEventListener("click",function(){show_slide(6);},false);
+document.getElementsByClassName("fa-angle-double-right")[6].addEventListener("click",function(){show_slide(7);},false);
+document.getElementsByClassName("fa-angle-double-right")[7].addEventListener("click",function(){show_slide(8);},false);
+document.getElementsByClassName("fa-angle-double-right")[8].addEventListener("click",function(){show_slide(9);},false);
+
+document.getElementsByClassName("fa-angle-double-left")[9].addEventListener("click",function(){show_slide(8);},false);
+document.getElementsByClassName("fa-angle-double-left")[8].addEventListener("click",function(){show_slide(7);},false);
+document.getElementsByClassName("fa-angle-double-left")[7].addEventListener("click",function(){show_slide(6);},false);
+document.getElementsByClassName("fa-angle-double-left")[6].addEventListener("click",function(){show_slide(5);},false);
+document.getElementsByClassName("fa-angle-double-left")[5].addEventListener("click",function(){show_slide(4);},false);
+document.getElementsByClassName("fa-angle-double-left")[4].addEventListener("click",function(){show_slide(3);},false);
+document.getElementsByClassName("fa-angle-double-left")[3].addEventListener("click",function(){show_slide(2);},false);
+document.getElementsByClassName("fa-angle-double-left")[2].addEventListener("click",function(){show_slide(1);},false);
+document.getElementsByClassName("fa-angle-double-left")[1].addEventListener("click",function(){show_slide(0);},false);
+
+//Apparition - disparition
+var help_icon = document.getElementsByClassName("help_icon")[0];
+var exit_icon = document.getElementsByClassName("exit_icon")[0];
+var help_fullscreen = document.getElementsByClassName("help_fullscreen")[0];
+
+help_icon.addEventListener("click",function(){help_icon.style.display="none";help_fullscreen.style.right="0vw";exit_icon.style.display="block";},false);
+exit_icon.addEventListener("click",function(){exit_icon.style.display="none";help_fullscreen.style.right="-100vw";help_icon.style.display="block";},false);
+
+
+
+//////////////////////////////////////////////////
+//////////////////////////////////////////////////
 //    SELECTION ET TAILLE DES SVG
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
@@ -735,21 +826,21 @@ svg_saros.append("polygon")
     
 var radius_duration_scale=d3.scaleTime()
 				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
-				.range([1,10]); 
+				.range([2*svg_width/700,10*svg_width/700]); 
 				
 				
 var radius_magnitude_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
-				.range([1,5]); 
+				.range([2*svg_width/700,5*svg_width/700]); 
 				
 				
 var radius_path_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
-				.range([1,10]); 
+				.range([2*svg_width/700,10*svg_width/700]); 
 				
 var radius_gamma_scale=d3.scaleLinear()
 				.domain(d3.extent(data, function(d) {return Math.abs(d['Gamma']);}))
-				.range([1,6]); 
+				.range([2*svg_width/700,6*svg_width/700]); 
 
 // layers:
 var svg_continent = svg_map.append('g');
@@ -1039,6 +1130,7 @@ function GE_onemouseleave(){
 
 showContinents();
 showGEonMap();
+changeGEonMap("LARGEUR");
 GE_interaction();
 show_only_type_and_date(selected_type,min_year,max_year);
 

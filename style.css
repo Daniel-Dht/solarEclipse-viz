@@ -622,3 +622,188 @@ polyline
 }
 
 
+
+
+
+
+
+
+
+/*Aide*/
+.help_icon
+{
+	font-size:1.8em;
+	color:rgb(0,31,63);
+	
+	display:block;
+	
+	position:fixed;
+	top:10px;
+	right:10px;
+	
+	cursor:pointer;
+	z-index:100;
+}
+.exit_icon
+{
+	font-size:1.8em;
+	color:white;
+	
+	display:none;
+	
+	position:fixed;
+	top:10px;
+	right:10px;
+	
+	cursor:pointer;
+	z-index:990;
+}
+
+.help_fullscreen
+{
+	width:100vw;
+	height:100vh;
+	background-color:rgba(0,0,0,0.85);
+	position:fixed;
+	top:0;
+	right:-100vw;
+	z-index:900;
+	color:white;
+	
+	transition:all 0.8s ease;
+	
+	backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+	
+	display:grid;
+	grid-template-rows:1fr 1fr 8fr 1fr;
+	grid-template-comns:1fr;
+}
+
+.help_logo
+{
+	width:70%;
+	margin:auto;
+	
+	padding-top:20px;
+	padding-bottom:10px;
+	
+	display:flex;
+	flex-direction:row;
+	flex-wrap:no-wrap;
+	justify-content:center;
+	align-items:center;
+}
+
+.help_menu
+{
+	width:70%;
+	margin:auto;
+	
+	display:flex;
+	flex-direction:row;
+	flex-wrap:no-wrap;
+	justify-content:center;
+	align-items:flex-end;
+	font-size:1.2em;
+}
+
+.help_menu span
+{
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:5px;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	cursor:pointer;
+	
+	transition: all 0.35s ease;
+}
+
+.help_content_data
+{
+	padding-top:20px;
+	padding-bottom:20px;
+	padding-right:10px;
+	width:70%;
+	height:90%;
+	margin:auto;
+}
+
+.help_content_data ul
+{
+	list-style:square;
+}
+
+.help_content_data a
+{
+	color: white;
+	text-decoration:underline;
+}
+
+.help_content_viz
+{
+	padding-top:20px;
+	padding-bottom:20px;
+	padding-left:40px;
+	padding-right:40px;
+	width:70%;
+	height:90%;
+	margin:auto;
+	overflow:auto;
+}
+
+.help_content_viz_slide
+{
+	width:100%;
+	height:100%;
+	
+	text-align:center;
+	
+	display:flex;
+	flex-direction:column;
+	flex-wrap:no-wrap;
+	justify-content:space-around;
+	align-items:center;
+	
+	animation-name: fade-in;
+	animation-duration: 0.5s;
+}
+
+.viz_slide
+{
+	width:100%;
+	height:100%;
+	display:flex;
+	flex-direction:row;
+	flex-wrap:no-wrap;
+	justify-content:space-between;
+	align-items:center;
+	
+}
+
+.help_content_viz span
+{
+	font-size:2em;
+}
+
+
+.help_footer
+{
+	width:70%;
+	margin:auto;
+	height:100%;
+	text-align:center;
+	padding-top:10px;
+	border-top:1px ridge white;
+}
+
+.help_footer a
+{
+	text-decoration:none;
+	color:white;
+}
+.help_footer a:hover
+{
+	text-decoration:underline;
+	color:white;
+}

@@ -224,6 +224,149 @@
 		
 	</div>
 	
+	
+	
+
+	<!-- Affichage de l'aide -->
+	<!-- Icone d'aide -->
+	<div class="help_icon far fa-question-circle"></div>
+	<div class="exit_icon far fa-times-circle"></div>
+	
+	
+	<div class="help_fullscreen">
+		<!-- Le logo --> 
+		<div class="help_logo">
+			<img src="logo.png" width="25%"></img>
+		</div>
+		<!-- Le menu --> 
+		<div class="help_menu">
+			<span class="help_menu_data_button">Données</span>
+			<span class="help_menu_viz_button">Visualisation</span>
+		</div>
+		<!-- Le contenu --> 
+		<div class="help_content">
+			<!-- Les infos sur les données -->
+			<div class="help_content_data">
+				Les données concernant les éclipses solaires sont fournies par la <a href="https://eclipse.gsfc.nasa.gov/eclipse.html">NASA</a> (<em>National Aeronautics and Space Administration</em>) et sont disponibles sur <a href="https://www.kaggle.com/nasa/solar-eclipses#solar.csv">kaggle</a>. Seules les éclipses solaires comprises entre 1970 et 2070 sont ici représentées. Les différentes variables sont les suivantes:<br/>
+				
+				<ul>
+					<li><em>Date</em> : date à laquelle a eu lieu l'éclipse solaire.</li>
+					<li><em>Heure</em> : instant auquel la distance entre le centre de la Terre et l'axe du cône d'ombre de la Lune est minimal.</li>
+					<li><em>Type</em> : il existe 4 grands types d'éclipses solaires :
+						<ul>
+							<li>&#9680; Partielle : une éclipse solaire partielle a lieu lorsque la Lune n'occulte que partiellement le soleil, le laissant en partie visible.</li>
+							<li>&#10687; Annulaire : une éclipse solaire annulaire a lieu lorsque la Lune, la Terre et le Soleil sont parfaitement alignés, mais que la taile apparente de la lune est inférieure à celle du soleil, laissant apparaître un anneau lumineux sur son périmètre.</li>
+							<li>&#11044; Totale : une éclipse solaire totale a lieu lorsque le soleil est entièrement occultée par la Lune.</li>
+							<li>&#9677; Hybride : une éclipse solaire hybride correspond à un état intermédiaire entre une éclipse solaire totale et une éclipse solaire annulaire.</li>
+						</ul>
+					</li>
+					<li><em>Largeur</em> : pour les éclipses solaires dont le centre du cône d'ombre de la Lune intersecte la Terre, il s'agît de la largeur de l'ombre à l'instant où la distance entre le centre de la Terre et l'axe du cône d'ombre de la Lune est minimal.</li>
+					<li><em>Durée</em> : durée de l'observation de l'éclipse solaire à son point d'observation optimal.</li>
+					<li><em>Ratio</em> : part du diamètre du Soleil occulté par la Lune.</li>
+					<li><em>Gamma</em> : distance minimale entre le centre de la Terre et l'axe du cône d'ombre de la Lune, exprimée en rayons terrestres (environ 6371 km).</li>
+					<li><em>Série de saros</em> : ensemble d'éclipses solaires semblables, espacées d'un intervalle de temps régulier.</li>
+				</ul>
+				
+			</div>
+			<!-- Les infos sur la visualisation -->
+			<div class="help_content_viz">
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left" style="visibility:hidden"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/map_fond.png" width="60%"></img>
+						<p>Un premier aspect de la visualisation des données se concentre sur les informations gégographiques et statistiques.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_liste_eclipses.png" width="60%"></img>
+						<p>Le volet de gauche présente la liste des éclipses solaires dans la période sélectionnée. En ce qui concerne le paramètre affiché, plusieurs choix sont possibles : largeur, ratio, durée et gamma. Un clic sur un élément permet de faire un blocage sur celui-ci.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_type_eclipses.png" width="60%"></img>
+						<p>La liste des éclipses peut être filtrée en fonction tu type d'éclipse solaire désiré.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_map.png" width="60%"></img>
+						<p>Une carte permet de situer chacune des éclipses solaires de la liste. Le rayon du point est proportionnel au paramètre choisi. Le survol d'un élément de la liste des éclipses permet de visualiser uniquement ce-dernier. Un clic sur un point permet de retrouver l'éclipse solaire correspondante dans la liste.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_slider.png" width="60%"></img>
+						<p>Un slider temporel permet de sélectionner une période comprise entre 1970 et 2070.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_periode.png" width="60%"></img>
+						<p>Des visualisations de quelques statistisques concernant la période sélectionnée sont disponibles.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_switch.png" width="60%"></img>
+						<p>Un bouton permet de basculer entre le premier aspect et le second aspect de la visualisation des données.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/saros_fond.png" width="60%"></img>
+						<p>Un second aspect de la visualisation des données se concentre sur la visualisation du phénomène de Saros.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_saros.png" width="60%"></img>
+						<p>La comparaison des paramètres des éclipses d'une même série de Saros est proposée.</p>
+					</div>
+					<span class="fas fa-angle-double-right"></span>
+				</div>
+				
+				<div class="viz_slide">
+					<span class="fas fa-angle-double-left"></span>
+					<div class="help_content_viz_slide">
+						<img src="images/help_saros_series.png" width="60%"></img>
+						<p>La liste des paramètres de chacune des éclipses d'une même série de Saros est disponible.</p>
+					</div>
+					<span class="fas fa-angle-double-right" style="visibility:hidden"></span>
+				</div>
+			</div>
+			
+		</div>
+		<!-- Le footer --> 
+		<div class="help_footer">
+		<a href="https://github.com/Daniel-Dht">DOUHERET Daniel</a> &nbsp;&nbsp; & &nbsp;&nbsp; <a href="https://github.com/GrgeoireGobert">GOBERT Grégoire</a>
+		</div>
+	</div>
 
 
 <script src="script.js"></script>
