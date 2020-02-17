@@ -137,6 +137,11 @@ function show_saros(e)
 						var saros_item = d3.select(".infos_supp_multiple_columns_saros")
 											.append("div")
 											.attr("class","saros_item")
+											.style("background-color",function()
+																	{
+																		if(d["Catalog Number"]===e["Catalog Number"]){return "rgb(230,230,230)";}
+																		else {return "rgb(250,250,250)";}
+																	});
 						 
 						//Remplissage de l'item
 						if(i==0)
@@ -365,6 +370,8 @@ d3.select(".choose_param_ratio").on("click",function()
 												
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Eclipse Magnitude']).toString().substring(0,4)+"%"});
 												
+												changeGEonMap("RATIO");
+												
 											});
 											
 d3.select(".choose_param_longueur").on("click",function()
@@ -378,6 +385,8 @@ d3.select(".choose_param_longueur").on("click",function()
 												eclipse_liste_item_param_span.text(function(d){return d['Path Width (km)'].toString()});
 												
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Path Width (km)']).toString().substring(0,4)+"%"});
+												
+												changeGEonMap("LARGEUR");
 												
 											});
    
@@ -393,6 +402,8 @@ d3.select(".choose_param_duree").on("click",function()
 												
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Central Duration']).toString().substring(0,4)+"%"});
 												
+												changeGEonMap("DUREE");
+												
 											});
 											
 d3.select(".choose_param_gamma").on("click",function()
@@ -406,6 +417,8 @@ d3.select(".choose_param_gamma").on("click",function()
 												eclipse_liste_item_param_span.text(function(d){return d['Gamma'].toString().substring(0,4)});
 												
 												eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Gamma']).toString().substring(0,4)+"%"});
+												
+												changeGEonMap("GAMMA");
 												
 											});
 											
@@ -717,6 +730,26 @@ svg_saros.append("polygon")
 //////////////////////////////////////////////////
 //////////////////////////////////////////////////
 
+// Les echelles pour le rayon des cercles
+					      
+    
+var radius_duration_scale=d3.scaleTime()
+				.domain(d3.extent(data, function(d) {return d['Central Duration'];}))
+				.range([1,10]); 
+				
+				
+var radius_magnitude_scale=d3.scaleLinear()
+				.domain(d3.extent(data, function(d) {return d['Eclipse Magnitude'];}))
+				.range([1,5]); 
+				
+				
+var radius_path_scale=d3.scaleLinear()
+				.domain(d3.extent(data, function(d) {return d['Path Width (km)'];}))
+				.range([1,10]); 
+				
+var radius_gamma_scale=d3.scaleLinear()
+				.domain(d3.extent(data, function(d) {return Math.abs(d['Gamma']);}))
+				.range([1,6]); 
 
 // layers:
 var svg_continent = svg_map.append('g');
@@ -881,18 +914,66 @@ function showAllPathOnMap(){
 
 
 function showGEonMap(){
-	data.forEach(function(d,i)
-	{       
-		var point = [d['Longitude'], d['Latitude']]
-		var proj = projection(point)
-		//console.log(point);
-		svg_GE.append('circle')
-			.attr("cx",proj[0]) 
-			.attr("cy",proj[1])
-			.attr("r", 0.05*path_scale(d['Path Width (km)']))
-			.style("fill","green")
-			.style('opacity','0.5')
-	}); 
+	svg_GE.selectAll("circle")
+		 .data(data)
+		 .enter()
+		 .append('circle')
+		 .attr("cx", function(d)
+					{
+						var point = [d['Longitude'], d['Latitude']];
+						var proj = projection(point);
+						return proj[0];
+					}) 
+		 .attr("cy", function(d)
+					{
+						var point = [d['Longitude'], d['Latitude']];
+						var proj = projection(point);
+						return proj[1];
+					}) 
+		//.attr("r", function(d){return radius_duration_scale(d['Central Duration'])})
+		//.attr("r", function(d){return radius_magnitude_scale(d['Eclipse Magnitude'])})
+		 .attr("r", function(d){return radius_path_scale(d['Path Width (km)'])})
+		//.attr("r", function(d){return radius_gamma_scale(Math.abs(d['Gamma']))})
+		 .style("fill","green")
+	     .style('opacity','0.5');
+	
+};
+
+// type : "RATIO" ou "LARGEUR" ou "DUREE" ou GAMMA"
+function changeGEonMap(type){
+	
+	if(type=="RATIO")
+	{
+		svg_GE.selectAll("circle")
+			//.attr("r", function(d){return radius_duration_scale(d['Central Duration'])})
+			.transition().duration(250).attr("r", function(d){return radius_magnitude_scale(d['Eclipse Magnitude'])})
+			//.attr("r", function(d){return radius_path_scale(d['Path Width (km)'])})
+			//.attr("r", function(d){return radius_gamma_scale(Math.abs(d['Gamma']))})
+	}
+	else if(type=="LARGEUR")
+	{
+		svg_GE.selectAll("circle")
+			//.attr("r", function(d){return radius_duration_scale(d['Central Duration'])})
+			//.attr("r", function(d){return radius_magnitude_scale(d['Eclipse Magnitude'])})
+			.transition().duration(250).attr("r", function(d){return radius_path_scale(d['Path Width (km)'])})
+			//.attr("r", function(d){return radius_gamma_scale(Math.abs(d['Gamma']))})
+	}
+	else if(type=="DUREE")
+	{
+		svg_GE.selectAll("circle")
+			.transition().duration(250).attr("r", function(d){return radius_duration_scale(d['Central Duration'])})
+			//.attr("r", function(d){return radius_magnitude_scale(d['Eclipse Magnitude'])})
+			//.attr("r", function(d){return radius_path_scale(d['Path Width (km)'])})
+			//.attr("r", function(d){return radius_gamma_scale(Math.abs(d['Gamma']))})
+	}
+	else if(type=="GAMMA")
+	{
+		svg_GE.selectAll("circle")
+			//.attr("r", function(d){return radius_duration_scale(d['Central Duration'])})
+			//.attr("r", function(d){return radius_magnitude_scale(d['Eclipse Magnitude'])})
+			//.attr("r", function(d){return radius_path_scale(d['Path Width (km)'])})
+			.transition().duration(250).attr("r", function(d){return radius_gamma_scale(Math.abs(d['Gamma']))})
+	}
 };
 
 function GE_interaction(){
