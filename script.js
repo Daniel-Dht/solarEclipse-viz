@@ -513,13 +513,13 @@ d3.select(".choose_param_gamma").on("click",function()
 												
 											});
 											
-//Par defaut : paramètre largeur:
-d3.select(".choosen_param i").text("Largeur (km)")
-var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Path Width (km)']})).range([0,70]);
-eclipse_liste_item_param_barre.style("visibility","visible");
-eclipse_liste_item_param_span.text(function(d){return d['Path Width (km)'].toString()});
-eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Path Width (km)']).toString().substring(0,4)+"%"});
+//Par defaut : paramètre durée:
+d3.select(".choosen_param i").text("Durée")
 
+var paramScale = d3.scaleLinear().domain(d3.extent(data,function(d){return d['Central Duration']})).range([0,70]);
+eclipse_liste_item_param_barre.style("visibility","visible");
+eclipse_liste_item_param_span.text(function(d){return formatDuree(d['Central Duration']).toString()});
+eclipse_liste_item_param_barre.style("width",function(d){return paramScale(d['Central Duration']).toString().substring(0,4)+"%"});
 											
 											
 
@@ -1106,11 +1106,14 @@ function GE_onemouseleave(){
 	//svg_path.html("");
 	
 	//On cache les points
+	svg_path.selectAll("circle").attr("fill","rgba(0,0,0,0)");
+	/*
 	for(var i=0;i<svg_path.selectAll("circle").size();i++)
 		{
 			svg_path.select("circle:nth-child("+i.toString()+")")
 					.attr("fill","rgba(0,0,0,0)");
 		}
+	*/
 	
 	var convertToDate=d3.timeParse("%d/%m/%Y");
 	var date_min=convertToDate("01/01/" +  min_year.toString());
@@ -1130,7 +1133,7 @@ function GE_onemouseleave(){
 
 showContinents();
 showGEonMap();
-changeGEonMap("LARGEUR");
+changeGEonMap("DUREE");
 GE_interaction();
 show_only_type_and_date(selected_type,min_year,max_year);
 
@@ -1317,12 +1320,15 @@ var stats_data={"Duree":{"mu":85,"sigma":4},
 				"Ratio":{"mu":38,"sigma":12},
 			    "Longueur":{"mu":53,"sigma":20}};
 				
+				
 function update_box_plot(stats)
 {
 	//on clean ce qu'il y a deja
 	box_svg.selectAll("circle").remove();
 	box_svg.selectAll(".big_line").remove();
 	box_svg.selectAll(".limit").remove();
+	box_svg.selectAll(".tooltip_duree").remove();
+	box_svg.selectAll(".tooltip_duree_text").remove();
 	
 	//On ajoute la moyenne
 	//Duree
@@ -1426,6 +1432,38 @@ function update_box_plot(stats)
 		   .attr("y2",(5*100/6-3).toString())
 		   .attr("stroke","rgb(0,31,63)")
 		   .attr("stroke-width","1.5");
+		   
+    //Et la tooltip
+	// Duree
+	/*
+	box_svg.append("rect").attr("class","tooltip_duree")
+						  .attr("x",function(){if(stats.Duree.mu<12){return 0;} else{ return stats.Duree.mu-12;}})
+						  .attr("y",(100/6+5).toString())
+						  .attr("width","24")
+						  .attr("height",(80/6).toString())
+						  .attr("rx",5)
+						  .attr("ry",5)
+						  .attr("fill","rgb(0,31,63)");
+						  
+	var nb_tot_secs=parseInt(stats.Duree.mu/100*723);
+	var nb_mins=parseInt(nb_tot_secs/60);
+	var nb_secs=parseInt(nb_tot_secs-nb_mins*60);
+	
+	var duree_string;
+	if(nb_mins<10){duree_string="0"+nb_mins.toString();}
+	else {duree_string=nb_mins.toString();}
+	if(nb_secs<10){duree_string=duree_string+":0"+nb_secs.toString();}
+	else {duree_string=duree_string+":"+nb_secs.toString();}
+	console.log(duree_string);
+	
+	box_svg.append("text").attr("class","tooltip_duree_text")
+						  .text(duree_string)
+						  .attr("x",function(){if(stats.Duree.mu<12){return 4;} else{ return stats.Duree.mu-8;}})
+						  .attr("y", (100/6+15).toString())
+						  .attr("font-size", "0.5em")
+						  .attr("fill","white");
+	*/
+							
 }
 
 
