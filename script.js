@@ -383,7 +383,6 @@ function lock_elt(d,from_list)
 								
 		//Affichage du bon saros
 		hide_saros();
-		show_saros(d);
 		//Affichage de la trajectoire sur la map
 		GE_onemouseleave();
 		GE_onemouseover(d['Catalog Number']-9442)
