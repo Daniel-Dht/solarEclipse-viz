@@ -22,7 +22,7 @@ Thanks to our project, the user will be able to :
 
 ## Credits
 
-The data used for this vizualisation is given by the NASA (Eclipse Predictions by Fred Espenak, NASA's GSFC, see https://eclipse.gsfc.nasa.gov/SEdecade/SEdecade1971.html) and is available in a friendly shape at Kaggle (see https://www.kaggle.com/nasa/solar-eclipses?fbclid=IwAR2UCw9-HOuhfdZv6Am8VPbllwrt_1D4H6i75bI-wLz42LPEG_lqIOzXzpI#solar.csv). 
+The data used for this vizualisation is given by the NASA (Eclipse Predictions by Fred Espenak, NASA's GSFC, see https://eclipse.gsfc.nasa.gov/SEdecade/SEdecade1971.html) and is available in a friendly shape at Kaggle (see https://www.kaggle.com/nasa/solar-eclipses?fbclid=IwAR2UCw9-HOuhfdZv6Am8VPbllwrt_1D4H6i75bI-wLz42LPEG_lqIOzXzpI#solar.csv). The part of the data we used is available at https://github.com/Daniel-Dht/solarEclipse-viz/blob/master/solar_1950_2050.csv for eclipse parameters and at https://github.com/Daniel-Dht/solarEclipse-viz/blob/master/all_paths.json for eclipse shadow paths.
 
 ## Links
 The course in which this project has been created : https://github.com/LyonDataViz/MOS5.5-Dataviz
